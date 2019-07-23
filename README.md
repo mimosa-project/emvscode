@@ -1,2 +1,2 @@
 # emvscode
-VSCode Extension for eco-Mizar
+VSCode Extension for Mizar
