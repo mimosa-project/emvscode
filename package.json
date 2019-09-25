@@ -19,6 +19,28 @@
 				"command": "extension.helloWorld",
 				"title": "Hello World"
 			}
+		],
+		"languages": [
+			{
+				"id": "Mizar",
+				"aliases": [
+					"Mizar",
+					"Mizar"
+				],
+				"extensions": [
+					".miz"
+				],
+				"configuration": "./language-configuration.json"
+				
+			}
+		],
+		"grammars": [
+			{
+				"language": "Mizar",
+				"scopeName": "source.miz",
+				"path": "./syntaxes/Mizar.tmLanguage.json"
+				
+			}
 		]
 	},
 	"scripts": {

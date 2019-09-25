@@ -1,0 +1,66 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Mizar",
+	"patterns": [
+		{
+			"include": "#keywords1"
+        },
+        {
+            "include": "#keywords2"
+        },
+        {
+            "include": "#keywords3"
+        },
+        {
+            "include": "#keywords4"
+		},
+		{
+            "include": "#keywords5"
+        },
+		{
+			"include": "#keywords6"
+		}
+	],
+	"repository": {
+		"keywords1": {
+			"patterns": [{
+				"name": "keyword.control.Mizar",
+				"match": "\\b(for|being|holds|st|implies|ex|not|&|or|iff)\\b"
+			}]
+        },
+        "keywords2": {
+			"patterns": [{
+				"name": "support.function.Mizar",
+				"match": "\\b(theorem|theorems|scheme|definition|definitions|clusters|signature|vocabularies|notations|constructors|registrations|requirements|schemes)\\b"
+			}]
+        },
+        "keywords3": {
+			"patterns": [{
+				"name": "keyword.other.Mizar",
+				"match": "\\b(and|antonym|attr|as|be|begin|canceled|cluster|coherence|compatibility|consider|consistency|contradiction|correctness|def|deffunc|defpred|environ|equals|existence|func|if|irreflexivity|it|means|mode|of|otherwise|over|pred|provided|qua|reconsider|redefine|reflexivity|reserve|struct|such|synonym|that|then|thesis|where|associativity|commutativity|connectedness|irreflexivity|reflexivity|symmetry|uniqueness|transitivity|idempotence|asymmetry|projectivity|involutiveness)\\b"
+			}]
+        },
+        "keywords4": {
+			"patterns": [{
+				"name": "entity.name.type.Mizar",
+                "match": "\\b(end|proof|now|hereby|case|suppose)\\b"
+			}]
+		},
+		"keywords5": {
+			"patterns": [{
+				"name": "comment.line.Mizar",
+                "match": "::.*"
+			}]
+		},
+		"keywords6": {
+			"name": "keywords6.quoted.double.Mizar",
+			"patterns": [
+				{
+					"name": "constant.character.escape.Mizar",
+					"match": "(by.*;|by.*\n)"
+				}
+			]
+		}
+    },
+    "scopeName": "source.miz"
+}
