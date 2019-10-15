@@ -23,8 +23,8 @@ export async function mizar_it(
     )
 {
     //コマンドを絶対パスにしている
-    util = mizfiles + "/" + util;
-    let makeenv = mizfiles + "/" + Makeenv;
+    util = path.join(String(mizfiles) ,util);
+    let makeenv = path.join(String(mizfiles),Makeenv);
 
     //拡張子を確認し、mizarファイルでなければエラーを示して終了
     if (path.extname(fileName) !== '.miz'){
@@ -52,7 +52,7 @@ export async function mizar_it(
     //非同期処理から実行結果を得るため、Promiseを利用している
     let result = new Promise((resolve) => {
 
-        makeenvProcess.on('exit', () => {
+        makeenvProcess.on('close', () => {
 
             if(!isMakeenvSuccess){
                 resolve('makeenv error');
@@ -70,7 +70,7 @@ export async function mizar_it(
                 }
             }, null, /\r/);
 
-            verifierProcess.on('exit',() => {
+            verifierProcess.on('close',() => {
 
                 if (!isVerifierSuccess){
                     resolve('verifier error');
