@@ -1,26 +1,32 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { mizar_it } from './mizarFunctions';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-		console.log('Congratulations, your extension "research" is now active!');
+	//verifierの実行結果を出力するチャンネル
+	var channel = vscode.window.createOutputChannel('output');
+    channel.show();
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
+	let disposable1 = vscode.commands.registerCommand('extension.helloWorld', () => {
 		vscode.window.showInformationMessage('Hello World!');
 	});
 
-	context.subscriptions.push(disposable);
+	let disposable2 = vscode.commands.registerCommand('mizar-it', () => {
+        //アクティブなエディタがなければエラーを示して終了
+        if (vscode.window.activeTextEditor === undefined){
+            vscode.window.showErrorMessage('Not currently in .miz file!!');
+            return;
+		}
+		
+		//アクティブなファイルのパスを取得
+		let fileName = vscode.window.activeTextEditor.document.fileName;
+
+		//makeenvとverifierの実行
+		mizar_it(channel,fileName);
+	});
+
+	context.subscriptions.push(disposable1);
+	context.subscriptions.push(disposable2);
 }
 
 // this method is called when your extension is deactivated
