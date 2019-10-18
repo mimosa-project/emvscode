@@ -16,7 +16,7 @@ export const mizfiles = process.env.MIZFILES;
  * @param (util) 実行するコマンド、デフォルトで"verifier"となっており、現時点では"verifier"以外使っていない
  * @return コマンドの実行結果を,"success","makeenv error", "verifier error"で返す
  */
-export async function mizar_it(
+export async function mizar_verify(
     channel:vscode.OutputChannel, 
     fileName:string, 
     util:string="verifier"

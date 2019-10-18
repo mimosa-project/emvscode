@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { mizar_it } from './mizarFunctions';
+import { mizar_verify } from './mizarFunctions';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage('Hello World!');
     });
 
-    let disposable2 = vscode.commands.registerCommand('mizar-it', () => {
+    let disposable2 = vscode.commands.registerCommand('mizar-verify', () => {
         //アクティブなエディタがなければエラーを示して終了
         if (vscode.window.activeTextEditor === undefined){
             vscode.window.showErrorMessage('Not currently in .miz file!!');
@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
         let fileName = vscode.window.activeTextEditor.document.fileName;
 
         //makeenvとverifierの実行
-        mizar_it(channel,fileName);
+        mizar_verify(channel,fileName);
     });
 
     context.subscriptions.push(disposable1);
