@@ -22,8 +22,8 @@
             },
             {
                 "category": "Mizar",
-				"command": "mizar-verify",
-				"title": "mizar-verify"
+                "command": "mizar-verify",
+                "title": "mizar-verify"
             }
         ],
         "languages": [
