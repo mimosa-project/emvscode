@@ -10,7 +10,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.helloWorld"
+        "onCommand:extension.helloWorld",
+        "onCommand:mizar-verify"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -18,6 +19,11 @@
             {
                 "command": "extension.helloWorld",
                 "title": "Hello World"
+            },
+            {
+                "category": "Mizar",
+                "command": "mizar-verify",
+                "title": "mizar-verify"
             }
         ],
         "languages": [
