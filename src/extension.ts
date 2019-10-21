@@ -1,5 +1,8 @@
 import * as vscode from 'vscode';
 import { mizar_verify } from './mizarFunctions';
+import { makeQueryFunction } from './mizarMessages';
+
+export const queryMizarMsg = makeQueryFunction();
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -12,6 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     let disposable2 = vscode.commands.registerCommand('mizar-verify', () => {
+        
         //アクティブなエディタがなければエラーを示して終了
         if (vscode.window.activeTextEditor === undefined){
             vscode.window.showErrorMessage('Not currently in .miz file!!');
