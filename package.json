@@ -11,7 +11,8 @@
     ],
     "activationEvents": [
         "onCommand:extension.helloWorld",
-        "onCommand:mizar-verify"
+        "onCommand:mizar-verify",
+        "onCommand:mizar-verify2"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -24,6 +25,11 @@
                 "category": "Mizar",
                 "command": "mizar-verify",
                 "title": "mizar-verify"
+            },
+            {
+                "category": "Mizar",
+                "command": "mizar-verify2",
+                "title": "mizar-verify2"
             }
         ],
         "languages": [
