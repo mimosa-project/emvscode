@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         //makeenvとverifierの実行
         let result = await mizar_verify(channel,fileName);
 
-        //verifierの結果でエラーがあれば、エラー表示関数を呼び出す
+        //makeenv,verifierの結果でエラーがあれば、エラー表示関数を呼び出す
         switch(result){
             case "success": break;
             case "makeenv error": 
