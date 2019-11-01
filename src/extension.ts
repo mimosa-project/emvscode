@@ -59,7 +59,6 @@ export function activate(context: vscode.ExtensionContext) {
         diagnosticCollection.clear();
 
         //アクティブなファイルのパスを取得
-        let uri = vscode.window.activeTextEditor.document.uri;
         let fileName = vscode.window.activeTextEditor.document.fileName;
         //errflag.exeの絶対パスを格納
         let errFlag = path.join(String(mizfiles),"errflag");
