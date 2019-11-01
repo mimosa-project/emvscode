@@ -66,9 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
         await mizar_verify(channel,fileName);
         //errflag.exeの実行(テキスト内にエラーのフラグを書き込む)
         require('child_process').spawn(errFlag,[fileName]);
-
     });
-
 
     context.subscriptions.push(disposable1);
     context.subscriptions.push(disposable2);
