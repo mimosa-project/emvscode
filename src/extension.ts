@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { mizar_verify } from './mizarFunctions';
+import * as path from 'path';
+import { mizar_verify, mizfiles } from './mizarFunctions';
 import { makeQueryFunction } from './mizarMessages';
 import { displayErrorLinks } from './displayErrors';
 
@@ -46,8 +47,30 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
+    //mizar-verify2の実行
+    let disposable3 = vscode.commands.registerCommand('mizar-verify2', async () => {
+        //アクティブなエディタがなければエラーを示して終了
+        if (vscode.window.activeTextEditor === undefined){
+            vscode.window.showErrorMessage('Not currently in .miz file!!');
+            return;
+        }
+
+        diagnostics = [];
+        diagnosticCollection.clear();
+
+        //アクティブなファイルのパスを取得
+        let fileName = vscode.window.activeTextEditor.document.fileName;
+        //errflag.exeの絶対パスを格納
+        let errFlag = path.join(String(mizfiles),"errflag");
+        //makeenvとverifierの実行
+        await mizar_verify(channel,fileName);
+        //errflag.exeの実行(テキスト内にエラーのフラグを書き込む)
+        require('child_process').spawn(errFlag,[fileName]);
+    });
+
     context.subscriptions.push(disposable1);
     context.subscriptions.push(disposable2);
+    context.subscriptions.push(disposable3);
 }
 
 // this method is called when your extension is deactivated
