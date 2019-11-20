@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { makeDisplayProgress } from './displayProgress';
-import { countArticleLines,countEnvironmentalLines } from './countLines';
+import { countLines } from './countLines';
 
 const carrier = require('carrier');
 const Makeenv = "makeenv";
@@ -22,29 +22,23 @@ export async function mizar_verify(
     channel:vscode.OutputChannel, 
     fileName:string, 
     util:string="verifier"
-    )
+)
 {
     //コマンドを絶対パスにしている
     util = path.join(String(mizfiles) ,util);
     let makeenv = path.join(String(mizfiles),Makeenv);
-
     //拡張子を確認し、mizarファイルでなければエラーを示して終了
     if (path.extname(fileName) !== '.miz'){
         vscode.window.showErrorMessage('Not currently in .miz file!!');
         return;
     }
-
     channel.clear();
     channel.show();
-
     const displayProgress = makeDisplayProgress();
-
     //makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
-    
     let isMakeenvSuccess = true;
     let isVerifierSuccess = true;
-
     carrier.carry(makeenvProcess.stdout, (line:string) => {
         channel.appendLine(line);
 
@@ -52,32 +46,31 @@ export async function mizar_verify(
             isMakeenvSuccess = false;
         }
     });
-
     //非同期処理から実行結果を得るため、Promiseを利用している
     let result = new Promise((resolve) => {
-
         makeenvProcess.on('close', () => {
-            channel.appendLine("Running " + path.basename(util) + " on " + fileName + '\n');
+            channel.appendLine("Running " + path.basename(util) 
+                                + " on " + fileName + '\n');
             channel.appendLine("   Start |------------------------------------------------->| End");
             if(!isMakeenvSuccess){
                 resolve('makeenv error');
                 return;
             }
-            let numberOfArticleLines:number = countArticleLines(fileName);
-            let numberOfBeginLine:number = countEnvironmentalLines(fileName); 
-            let numberOfOutput:number = 0;
+            let [numberOfEnvironmentalLines,
+                numberOfArticleLines] = countLines(fileName);
+            let numberOfProgress:number = 0;
             let verifierProcess = require('child_process').spawn(util,[fileName]);
             carrier.carry(verifierProcess.stdout, (line:string) => {
                 // lineを渡してプログレスバーを表示する関数を呼び出す
-                numberOfOutput = displayProgress(channel,line,numberOfArticleLines,numberOfBeginLine);
+                numberOfProgress = displayProgress(channel,line,
+                    numberOfArticleLines,numberOfEnvironmentalLines);
                 if(line.indexOf('*') !== -1){
                     isVerifierSuccess = false;
                 }
             }, null, /\r/);
-
             verifierProcess.on('close',() => {
                 // 最後の項目のプログレスバーが50未満であれば、足りない分を補完
-                for(let i = 0; i < 50 - numberOfOutput; i++){
+                for(let i = 0; i < 50 - numberOfProgress; i++){
                     channel.append('#');
                 }
                 channel.appendLine("\n\nEnd.");
