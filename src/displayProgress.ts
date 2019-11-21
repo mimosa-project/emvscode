@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+export const MAX_OUTPUT = 50;
 
 /**
  * @fn
@@ -9,11 +10,8 @@ import * as vscode from 'vscode';
  * @return num文字までスペースを追加した文字列
  */
 function padSpace(str:string, num:number=9){
-    let padding = str;
-    for (let i = 0; i < num - str.length; i++){
-        padding = padding + " ";
-    }
-    return padding;
+    let padding = " ";
+    return str + padding.repeat(num-str.length);
 }
 
 /**
@@ -28,6 +26,8 @@ export function makeDisplayProgress(){
     // 出力から得た項目(Parser,MSM等)が「コマンドを実行してから初めて得た項目なのか」を判定するために使うリスト
     // コマンドの実行ごとに空リストから始まり、Parser,MSM,Analyzer等の取得した項目をpushする
     let items:string[] = [];
+    let storeNumberOfErrors = 0;
+
 
     /**
      * @fn
@@ -42,21 +42,23 @@ export function makeDisplayProgress(){
         line:string,
         numberOfArticleLines:number,
         numberOfEnvironmentalLines:number
-    ):number
+    ):number[]
     {
         // REVIEW:正規表現が正しいか確認
         // Parser   [3482] などを正規表現として抜き出し、
         // 「Parser」や「3482」にあたる部分をグループ化している
-        let matched = line.match(/^(\w+) +\[ *(\d+) *\**\d*\].*$/);
+        let matched = line.match(/^(\w+) +\[ *(\d+) *\**(\d*)\].*$/);
         if(matched === null){
-            return numberOfProgress;
+            return [numberOfProgress,storeNumberOfErrors];
         }
         // 実行して初めて得た項目であった時の前処理
         if (items.indexOf(matched[1],0) === -1){
             if(items.length !== 0){
-                // 直前の項目の#が50未満であれば、足りない分を#で補完
-                for (let i = 0; i < 50 - numberOfProgress; i++){
-                    channel.append("#");
+                // 直前の項目の#がMAX_OUTPUT未満であれば、足りない分を#で補完
+                let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
+                channel.append(appendChunk);
+                if (storeNumberOfErrors){
+                    channel.append(" *" + storeNumberOfErrors);
                 }
                 channel.appendLine("");
             }
@@ -69,16 +71,13 @@ export function makeDisplayProgress(){
         }
         // 現在の進度と、出力のバーの差を計算する
         let progressDiff = (Number(matched[2]) - numberOfEnvironmentalLines) 
-                        / numberOfArticleLines * 50 - numberOfProgress;
+                        / numberOfArticleLines * MAX_OUTPUT - numberOfProgress;
         // 「現在の進度-出力している進度」の差を埋める出力処理
-        for (let i = 0; i < Math.floor(progressDiff); i++){
-            if (numberOfProgress >= 50){
-                break;
-            }
-            channel.append("#");
-            numberOfProgress += 1;
-        }
-        return numberOfProgress;
+        let appendChunk = "#".repeat(Math.floor(progressDiff));
+        channel.append(appendChunk);
+        numberOfProgress += Math.floor(progressDiff);
+        storeNumberOfErrors = Number(matched[3]);
+        return [numberOfProgress,storeNumberOfErrors];
     }
     return _displayProgress;
 }

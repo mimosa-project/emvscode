@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { makeDisplayProgress } from './displayProgress';
+import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
 import { countLines } from './countLines';
 
 const carrier = require('carrier');
@@ -59,21 +59,24 @@ export async function mizar_verify(
             let [numberOfEnvironmentalLines,
                 numberOfArticleLines] = countLines(fileName);
             let numberOfProgress:number = 0;
+            let numberOfErrors:number = 0;
             let verifierProcess = require('child_process').spawn(util,[fileName]);
             carrier.carry(verifierProcess.stdout, (line:string) => {
                 // lineを渡してプログレスバーを表示する関数を呼び出す
-                numberOfProgress = displayProgress(channel,line,
+                [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
                     numberOfArticleLines,numberOfEnvironmentalLines);
                 if(line.indexOf('*') !== -1){
                     isVerifierSuccess = false;
                 }
             }, null, /\r/);
             verifierProcess.on('close',() => {
-                // 最後の項目のプログレスバーが50未満であれば、足りない分を補完
-                for(let i = 0; i < 50 - numberOfProgress; i++){
-                    channel.append('#');
+                // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
+                let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
+                channel.append(appendChunk);
+                if(numberOfErrors){
+                    channel.append(" *" + numberOfErrors);
                 }
-                channel.appendLine("\n\nEnd.");
+                channel.appendLine("\n\nEnd.\n");
                 if (!isVerifierSuccess){
                     resolve('verifier error');
                 }
