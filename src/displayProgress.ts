@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+// プログレスバーとして出力する「#」の最大数
 export const MAX_OUTPUT = 50;
 
 /**
@@ -26,6 +27,7 @@ export function makeDisplayProgress(){
     // 出力から得た項目(Parser,MSM等)が「コマンドを実行してから初めて得た項目なのか」を判定するために使うリスト
     // コマンドの実行ごとに空リストから始まり、Parser,MSM,Analyzer等の取得した項目をpushする
     let items:string[] = [];
+    // mizarが出力したエラーの数を保持する変数
     let storeNumberOfErrors = 0;
 
 
@@ -57,6 +59,7 @@ export function makeDisplayProgress(){
                 // 直前の項目の#がMAX_OUTPUT未満であれば、足りない分を#で補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
+                // エラーがあれば、その数を出力
                 if (storeNumberOfErrors){
                     channel.append(" *" + storeNumberOfErrors);
                 }
