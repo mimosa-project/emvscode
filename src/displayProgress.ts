@@ -75,10 +75,15 @@ export function makeDisplayProgress(){
         // 現在の進度と、出力のバーの差を計算する
         let progressDiff = (Number(matched[2]) - numberOfEnvironmentalLines) 
                         / numberOfArticleLines * MAX_OUTPUT - numberOfProgress;
+        // 出力できる最大の数はMAX_OUTPUTなので、それを超えないように設定
+        if(numberOfProgress + Math.floor(progressDiff) > MAX_OUTPUT){
+            progressDiff = MAX_OUTPUT - numberOfProgress;
+        }
         // 「現在の進度-出力している進度」の差を埋める出力処理
         let appendChunk = "#".repeat(Math.floor(progressDiff));
         channel.append(appendChunk);
         numberOfProgress += Math.floor(progressDiff);
+        // mizarが出力したエラーの数を保存しておく
         storeNumberOfErrors = Number(matched[3]);
         return [numberOfProgress,storeNumberOfErrors];
     }
