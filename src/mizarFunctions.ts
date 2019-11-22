@@ -49,13 +49,13 @@ export async function mizar_verify(
     //非同期処理から実行結果を得るため、Promiseを利用している
     let result = new Promise((resolve) => {
         makeenvProcess.on('close', () => {
-            channel.appendLine("Running " + path.basename(util) 
-                                + " on " + fileName + '\n');
-            channel.appendLine("   Start |------------------------------------------------->| End");
             if(!isMakeenvSuccess){
                 resolve('makeenv error');
                 return;
             }
+            channel.appendLine("Running " + path.basename(util) 
+                                + " on " + fileName + '\n');
+            channel.appendLine("   Start |------------------------------------------------->| End");
             let [numberOfEnvironmentalLines,
                 numberOfArticleLines] = countLines(fileName);
             let numberOfProgress:number = 0;
