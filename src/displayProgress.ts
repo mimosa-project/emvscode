@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+// プログレスバーとして出力する「#」の最大数
+export const MAX_OUTPUT = 50;
 
 /**
  * @fn
@@ -9,11 +11,8 @@ import * as vscode from 'vscode';
  * @return num文字までスペースを追加した文字列
  */
 function padSpace(str:string, num:number=9){
-    let padding = str;
-    for (let i = 0; i < num - str.length; i++){
-        padding = padding + " ";
-    }
-    return padding;
+    let padding = " ";
+    return str + padding.repeat(num-str.length);
 }
 
 /**
@@ -28,6 +27,9 @@ export function makeDisplayProgress(){
     // 出力から得た項目(Parser,MSM等)が「コマンドを実行してから初めて得た項目なのか」を判定するために使うリスト
     // コマンドの実行ごとに空リストから始まり、Parser,MSM,Analyzer等の取得した項目をpushする
     let items:string[] = [];
+    // mizarが出力したエラーの数を保持する変数
+    let storeNumberOfErrors = 0;
+
 
     /**
      * @fn
@@ -42,21 +44,24 @@ export function makeDisplayProgress(){
         line:string,
         numberOfArticleLines:number,
         numberOfEnvironmentalLines:number
-    ):number
+    ):number[]
     {
         // REVIEW:正規表現が正しいか確認
         // Parser   [3482] などを正規表現として抜き出し、
         // 「Parser」や「3482」にあたる部分をグループ化している
-        let matched = line.match(/^(\w+) +\[ *(\d+) *\**\d*\].*$/);
+        let matched = line.match(/^(\w+) +\[ *(\d+) *\**(\d*)\].*$/);
         if(matched === null){
-            return numberOfProgress;
+            return [numberOfProgress,storeNumberOfErrors];
         }
         // 実行して初めて得た項目であった時の前処理
         if (items.indexOf(matched[1],0) === -1){
             if(items.length !== 0){
-                // 直前の項目の#が50未満であれば、足りない分を#で補完
-                for (let i = 0; i < 50 - numberOfProgress; i++){
-                    channel.append("#");
+                // 直前の項目の#がMAX_OUTPUT未満であれば、足りない分を#で補完
+                let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
+                channel.append(appendChunk);
+                // エラーがあれば、その数を出力
+                if (storeNumberOfErrors){
+                    channel.append(" *" + storeNumberOfErrors);
                 }
                 channel.appendLine("");
             }
@@ -69,16 +74,18 @@ export function makeDisplayProgress(){
         }
         // 現在の進度と、出力のバーの差を計算する
         let progressDiff = (Number(matched[2]) - numberOfEnvironmentalLines) 
-                        / numberOfArticleLines * 50 - numberOfProgress;
-        // 「現在の進度-出力している進度」の差を埋める出力処理
-        for (let i = 0; i < Math.floor(progressDiff); i++){
-            if (numberOfProgress >= 50){
-                break;
-            }
-            channel.append("#");
-            numberOfProgress += 1;
+                        / numberOfArticleLines * MAX_OUTPUT - numberOfProgress;
+        // 出力できる最大の数はMAX_OUTPUTなので、それを超えないように設定
+        if(numberOfProgress + Math.floor(progressDiff) > MAX_OUTPUT){
+            progressDiff = MAX_OUTPUT - numberOfProgress;
         }
-        return numberOfProgress;
+        // 「現在の進度-出力している進度」の差を埋める出力処理
+        let appendChunk = "#".repeat(Math.floor(progressDiff));
+        channel.append(appendChunk);
+        numberOfProgress += Math.floor(progressDiff);
+        // mizarが出力したエラーの数を保存しておく
+        storeNumberOfErrors = Number(matched[3]);
+        return [numberOfProgress,storeNumberOfErrors];
     }
     return _displayProgress;
 }
