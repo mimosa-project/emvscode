@@ -3,7 +3,6 @@ import * as path from 'path';
 import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
 import { countLines } from './countLines';
 import { displayErrorLinks } from './displayErrors';
-import { resolve } from 'dns';
 
 const carrier = require('carrier');
 const Makeenv = "makeenv";
@@ -40,7 +39,7 @@ export async function mizar_verify(
     // makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
     let isMakeenvSuccess = true;
-    let isVerifierSuccess = true;
+    let isCommandSuccess = true;
     carrier.carry(makeenvProcess.stdout, (line:string) => {
         channel.appendLine(line);
         if (line.indexOf('*') !== -1){
@@ -67,7 +66,7 @@ export async function mizar_verify(
                 [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
                     numberOfArticleLines,numberOfEnvironmentalLines);
                 if(line.indexOf('*') !== -1){
-                    isVerifierSuccess = false;
+                    isCommandSuccess = false;
                 }
             }, null, /\r/);
             commandProcess.on('close',() => {
@@ -79,7 +78,7 @@ export async function mizar_verify(
                     channel.append(" *" + numberOfErrors);
                 }
                 channel.appendLine("\n\nEnd.\n");
-                if (!isVerifierSuccess){
+                if (!isCommandSuccess){
                     resolve('command error');
                 }
                 else{
