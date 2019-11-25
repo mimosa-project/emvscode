@@ -12,7 +12,14 @@
     "activationEvents": [
         "onCommand:extension.helloWorld",
         "onCommand:mizar-verify",
-        "onCommand:mizar-verify2"
+        "onCommand:mizar-verify2",
+        "onCommand:mizar-irrths",
+        "onCommand:mizar-relinfer",
+        "onCommand:mizar-trivdemo",
+        "onCommand:mizar-reliters",
+        "onCommand:mizar-relprem",
+        "onCommand:mizar-irrvoc",
+        "onCommand:mizar-inacc"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -30,6 +37,41 @@
                 "category": "Mizar",
                 "command": "mizar-verify2",
                 "title": "mizar-verify2"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-irrths",
+				"title": "mizar-irrths"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-relinfer",
+				"title": "mizar-relinfer"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-trivdemo",
+				"title": "mizar-trivdemo"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-reliters",
+				"title": "mizar-reliters"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-relprem",
+				"title": "mizar-relprem"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-irrvoc",
+				"title": "mizar-irrvoc"
+            },
+            {
+				"category": "Mizar",
+				"command": "mizar-inacc",
+				"title": "mizar-inacc"
             }
         ],
         "languages": [
