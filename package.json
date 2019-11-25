@@ -39,39 +39,39 @@
                 "title": "mizar-verify2"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-irrths",
-				"title": "mizar-irrths"
+                "category": "Mizar",
+                "command": "mizar-irrths",
+                "title": "mizar-irrths"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-relinfer",
-				"title": "mizar-relinfer"
+                "category": "Mizar",
+                "command": "mizar-relinfer",
+                "title": "mizar-relinfer"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-trivdemo",
-				"title": "mizar-trivdemo"
+                "category": "Mizar",
+                "command": "mizar-trivdemo",
+                "title": "mizar-trivdemo"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-reliters",
-				"title": "mizar-reliters"
+                "category": "Mizar",
+                "command": "mizar-reliters",
+                "title": "mizar-reliters"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-relprem",
-				"title": "mizar-relprem"
+                "category": "Mizar",
+                "command": "mizar-relprem",
+                "title": "mizar-relprem"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-irrvoc",
-				"title": "mizar-irrvoc"
+                "category": "Mizar",
+                "command": "mizar-irrvoc",
+                "title": "mizar-irrvoc"
             },
             {
-				"category": "Mizar",
-				"command": "mizar-inacc",
-				"title": "mizar-inacc"
+                "category": "Mizar",
+                "command": "mizar-inacc",
+                "title": "mizar-inacc"
             }
         ],
         "languages": [
