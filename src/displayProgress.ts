@@ -30,7 +30,6 @@ export function makeDisplayProgress(){
     // mizarが出力したエラーの数を保持する変数
     let storeNumberOfErrors = 0;
 
-
     /**
      * @fn
      * プログラムの出力を受け取り、その進度を示す関数
