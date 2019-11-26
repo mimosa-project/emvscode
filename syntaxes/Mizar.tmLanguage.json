@@ -31,13 +31,13 @@
         "keywords2": {
             "patterns": [{
                 "name": "support.function.Mizar",
-                "match": "\\b(theorem|theorems|scheme|definition|definitions|clusters|signature|vocabularies|notations|constructors|registrations|requirements|schemes)\\b"
+                "match": "\\b(equalities|expansions|theorem|theorems|scheme|definition|definitions|clusters|signature|vocabulary|vocabularies|notation|notations|constructors|registration|registrations|requirements|schemes)\\b"
             }]
         },
         "keywords3": {
             "patterns": [{
                 "name": "keyword.other.Mizar",
-                "match": "\\b(and|antonym|attr|as|be|begin|canceled|cluster|coherence|compatibility|consider|consistency|contradiction|correctness|def|deffunc|defpred|environ|equals|existence|func|if|irreflexivity|it|means|mode|of|otherwise|over|pred|provided|qua|reconsider|redefine|reflexivity|reserve|struct|such|synonym|that|then|thesis|where|associativity|commutativity|connectedness|irreflexivity|reflexivity|symmetry|uniqueness|transitivity|idempotence|asymmetry|projectivity|involutiveness)\\b"
+                "match": "\\b(assume|cases|given|per|thus|take|hence|is|let|and|antonym|attr|as|be|begin|canceled|cluster|coherence|compatibility|consider|consistency|contradiction|correctness|def|deffunc|defpred|environ|equals|existence|func|if|irreflexivity|it|means|mode|of|otherwise|over|pred|provided|qua|reconsider|redefine|reflexivity|reserve|struct|such|synonym|that|then|thesis|where|associativity|commutativity|connectedness|irreflexivity|reflexivity|symmetry|uniqueness|transitivity|idempotence|asymmetry|projectivity|involutiveness)\\b"
             }]
         },
         "keywords4": {
@@ -57,7 +57,7 @@
             "patterns": [
                 {
                     "name": "constant.character.escape.Mizar",
-                    "match": "(by.*;|by.*\n)"
+                    "match": "( by.*;| by.*\n)"
                 }
             ]
         }
