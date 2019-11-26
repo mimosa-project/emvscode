@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
 import { countLines } from './countLines';
-import { displayErrorLinks } from './displayErrors';
 
 const carrier = require('carrier');
 const Makeenv = "makeenv";
@@ -88,21 +87,4 @@ export async function mizar_verify(
         });
     });
     return await result;
-}
-
-export function postProcessing(
-    channel:vscode.OutputChannel,
-    fileName:string,
-    uri:vscode.Uri,
-    result:string,
-    diagnostics:vscode.Diagnostic[],
-    diagnosticCollection:vscode.DiagnosticCollection
-)
-{
-    switch(result){
-        case "success": break;
-        case "makeenv error":
-        case "command error":
-            displayErrorLinks(channel,fileName,uri,diagnostics,diagnosticCollection);
-    }
 }
