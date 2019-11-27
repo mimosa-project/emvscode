@@ -5,7 +5,9 @@ VSCode Extension for Mizar
 ### Prerequisites
 You have to install below softwares.
 * VisualStudioCode
+    * https://code.visualstudio.com/
 * mizar
+    * http://mizar.org/system/#download
 ### Installing
 1.In VSCode, push (Ctrl+Shift+X) and type "emvscode".  
 2.Click "emvscode" and "install".  
