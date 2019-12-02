@@ -2,7 +2,7 @@
 VSCode Extension for Mizar
 ## Getting Started
 ### Prerequisites
-You have to install below softwares.
+You have to install following softwares.
 * VisualStudioCode
     * https://code.visualstudio.com/
 * Mizar
