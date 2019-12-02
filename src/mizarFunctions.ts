@@ -40,7 +40,14 @@ export async function mizar_verify(
     let isMakeenvSuccess = true;
     let isCommandSuccess = true;
     carrier.carry(makeenvProcess.stdout, (line:string) => {
-        channel.appendLine(line);
+        // -Vocabularies
+        // -Vocabularies  [ 22]
+        // -Requirements
+        // -Requirements  [ 34]
+        // 上記のような記述は出力しないようにする
+        if(!/^-/.test(line)){
+            channel.appendLine(line);
+        }
         if (line.indexOf('*') !== -1){
             isMakeenvSuccess = false;
         }
