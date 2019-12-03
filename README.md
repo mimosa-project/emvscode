@@ -1,4 +1,4 @@
-# emvscode
+# Mizar extension
 VSCode Extension for Mizar
 ## Getting Started
 ### Prerequisites
@@ -9,6 +9,7 @@ You have to install following softwares.
     * https://mizar.org/system/#download
 * Node.js and Yeoman and VS Code Extension Generator
     * https://code.visualstudio.com/api/get-started/your-first-extension
+
 ### Installing
 You can download this project from below URL.  
 https://github.com/mimosa-project/emvscode  
@@ -45,6 +46,7 @@ mizar-inacc runs makeenv and inacc.
 mizar-trivdemo runs makeenv and trivdemo.  
 ### 9.mizar-irrvoc
 mizar-irrvoc runs makeenv and irrvoc.  
+
 ## Built With
 * Visual Studio Code  
 ## Authors
