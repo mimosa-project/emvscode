@@ -1,6 +1,6 @@
 {
-    "name": "emvscode",
-    "displayName": "emvscode",
+    "name": "mizar-extension",
+    "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
     "version": "0.0.1",
     "publisher": "fpsbpkm",
@@ -108,5 +108,6 @@
         "tslint": "^5.12.1",
         "@types/node": "^10.12.21",
         "@types/mocha": "^2.2.42"
-    }
+    },
+    "icon":"images/mizar.png"
 }
