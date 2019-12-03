@@ -21,6 +21,7 @@ https://code.visualstudio.com/api/working-with-extensions/testing-extension
 ## Deployment
 1. In VSCode, push (Ctrl+Shift+X) and search "mizar".  
 2. Click the extesnion to install.  
+
 ## How to use this extension
 There are 9 commands of mizar in this extension.  
 To use these commands, you have to push (Ctrl+Shift+P) and choose a command.  
@@ -50,6 +51,6 @@ mizar-irrvoc runs makeenv and irrvoc.
 ## Built With
 * Visual Studio Code  
 ## Authors
-* Hiroto Taniguchi
+* Hiroto Taniguchi  
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.  
