@@ -50,7 +50,9 @@ mizar-irrvoc runs makeenv and irrvoc.
 
 ## Built With
 * Visual Studio Code  
+
 ## Authors
 * Hiroto Taniguchi  
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.  
