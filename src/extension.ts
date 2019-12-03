@@ -66,60 +66,58 @@ export function activate(context: vscode.ExtensionContext) {
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     let diagnostics:vscode.Diagnostic[] = [];
-    let disposable1 = vscode.commands.registerCommand('extension.helloWorld', () => {
-        vscode.window.showInformationMessage("Hello!");
-    });
+
     // mizar-verifyの処理
-    let disposable2 = vscode.commands.registerCommand(
+    let disposable1 = vscode.commands.registerCommand(
         'mizar-verify', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier"
         )
     );
     // mizar-verify2の実行(第5引数でisVerify2をtrueにする)
-    let disposable3 = vscode.commands.registerCommand(
+    let disposable2 = vscode.commands.registerCommand(
         'mizar-verify2', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier",true
         )
     );
-    let disposable4 = vscode.commands.registerCommand(
+    let disposable3 = vscode.commands.registerCommand(
         'mizar-irrths', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"irrths"
         )
     );
-    let disposable5 = vscode.commands.registerCommand(
+    let disposable4 = vscode.commands.registerCommand(
         'mizar-relinfer', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"relinfer"
         )
     );
-    let disposable6 = vscode.commands.registerCommand(
+    let disposable5 = vscode.commands.registerCommand(
         'mizar-trivdemo', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"trivdemo"
         )
     );
-    let disposable7 = vscode.commands.registerCommand(
+    let disposable6 = vscode.commands.registerCommand(
         'mizar-reliters', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"reliters"
         )
     );
-    let disposable8 = vscode.commands.registerCommand(
+    let disposable7 = vscode.commands.registerCommand(
         'mizar-relprem', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"relprem"
         )
     );
-    let disposable9 = vscode.commands.registerCommand(
+    let disposable8 = vscode.commands.registerCommand(
         'mizar-irrvoc', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"irrvoc"
         )
     );
-    let disposable10 = vscode.commands.registerCommand(
+    let disposable9 = vscode.commands.registerCommand(
         'mizar-inacc', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"inacc"
@@ -135,7 +133,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable7);
     context.subscriptions.push(disposable8);
     context.subscriptions.push(disposable9);
-    context.subscriptions.push(disposable10);
 }
 
 // this method is called when your extension is deactivated
