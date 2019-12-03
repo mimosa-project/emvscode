@@ -56,7 +56,7 @@ function returnExecutingFunction(
                     channel,fileName,uri,diagnostics,diagnosticCollection
                 );
         }
-    }
+    };
 }
 
 export function activate(context: vscode.ExtensionContext) {

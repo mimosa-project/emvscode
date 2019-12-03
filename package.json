@@ -11,9 +11,9 @@
         "Programming Languages"
     ],
     "repository": {
-		"type": "git",
-		"url": "https://github.com/mimosa-project/emvscode"
-	},
+        "type": "git",
+        "url": "https://github.com/mimosa-project/emvscode"
+    },
     "activationEvents": [
         "onCommand:mizar-verify",
         "onCommand:mizar-verify2",
