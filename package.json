@@ -1,16 +1,19 @@
 {
-    "name": "research",
-    "displayName": "research",
-    "description": "",
+    "name": "emvscode",
+    "displayName": "emvscode",
+    "description": "An extension for VS Code which provides support for the Mizar language.",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.38.0"
     },
     "categories": [
-        "Other"
+        "Programming Languages"
     ],
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/mimosa-project/emvscode"
+	},
     "activationEvents": [
-        "onCommand:extension.helloWorld",
         "onCommand:mizar-verify",
         "onCommand:mizar-verify2",
         "onCommand:mizar-irrths",
@@ -24,10 +27,6 @@
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
-            {
-                "command": "extension.helloWorld",
-                "title": "Hello World"
-            },
             {
                 "category": "Mizar",
                 "command": "mizar-verify",
