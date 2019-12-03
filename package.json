@@ -3,6 +3,7 @@
     "displayName": "emvscode",
     "description": "An extension for VS Code which provides support for the Mizar language.",
     "version": "0.0.1",
+    "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
     },
