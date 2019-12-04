@@ -21,7 +21,7 @@
         ["(", ")"]
     ],
     "indentationRules": {
-        "increaseIndentPattern": "(case|suppose|hereby|now|proof|definition|registration|notation|scheme|theorem)( .*)?$",
+        "increaseIndentPattern": "(^| )(case|suppose|hereby|now|proof|definition|registration|notation|scheme|theorem)( .*)?$",
         "decreaseIndentPattern": "^ *end;.*$"
     }
 }
