@@ -38,6 +38,11 @@ function returnExecutingFunction(
         // アクティブなファイルのパスを取得
         let uri = vscode.window.activeTextEditor.document.uri;
         let fileName =vscode.window.activeTextEditor.document.fileName;
+        // 環境変数MIZFILESが未定義ならエラーメッセージを表示
+        if (mizfiles === undefined){
+            vscode.window.showErrorMessage('You have to set environment variable "MIZFILES"');
+            return;
+        }
         // makeenvとverifierの実行
         let result = await mizar_verify(channel,fileName,command);
         // mizar-verify2の場合はerrflagを実行する
@@ -66,7 +71,6 @@ export function activate(context: vscode.ExtensionContext) {
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     let diagnostics:vscode.Diagnostic[] = [];
-
     // mizar-verifyの処理
     let disposable1 = vscode.commands.registerCommand(
         'mizar-verify', 
