@@ -6,7 +6,7 @@ You have to install following softwares.
 * VisualStudioCode
     * https://code.visualstudio.com/
 * Mizar
-    * https://mizar.org/system/#download
+    * http://mizar.org/system/#download
 * Node.js and Yeoman and VS Code Extension Generator
     * https://code.visualstudio.com/api/get-started/your-first-extension
 
