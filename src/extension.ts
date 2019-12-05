@@ -44,7 +44,15 @@ function returnExecutingFunction(
             return;
         }
         // makeenvとverifierの実行
-        let result = await mizar_verify(channel,fileName,command);
+        let result = null;
+        let prevCwd = process.cwd();
+        try {
+            // dict,prelを読み込むため、カレントディレクトリを対象ファイルの1つ上へ変更
+            process.chdir(path.join( path.dirname(fileName), '..') );
+            result = await mizar_verify(channel,fileName,command);
+        } finally {
+            process.chdir(prevCwd);
+        }
         // mizar-verify2の場合はerrflagを実行する
         if(isVerify2){
             // errflagの実行
