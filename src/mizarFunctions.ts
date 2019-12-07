@@ -80,8 +80,13 @@ export async function mizar_verify(
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
                 // エラーがあれば、その数を出力
-                if(numberOfErrors){
-                    channel.append(" *" + numberOfErrors);
+                if(numberOfErrors > 1){
+                    channel.appendLine(" *" + numberOfErrors);
+                    channel.append("\n**** " + numberOfErrors + " errors detected.");
+                }
+                else if(numberOfErrors === 1){
+                    channel.appendLine(" *" + numberOfErrors);
+                    channel.append("\n**** " + numberOfErrors + " error detected.");
                 }
                 channel.appendLine("\n\nEnd.\n");
                 if (!isCommandSuccess){
