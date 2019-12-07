@@ -88,6 +88,9 @@ export async function mizar_verify(
                     channel.appendLine(" *" + numberOfErrors);
                     channel.append("\n**** " + numberOfErrors + " error detected.");
                 }
+                else{
+                    channel.append("\n\n**** There are not any errors.");
+                }
                 channel.appendLine("\n\nEnd.\n");
                 if (!isCommandSuccess){
                     resolve('command error');
