@@ -79,9 +79,17 @@ export async function mizar_verify(
                 // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
-                // エラーがあれば、その数を出力
-                if(numberOfErrors){
-                    channel.append(" *" + numberOfErrors);
+                // エラーの有無を出力
+                if(numberOfErrors > 1){
+                    channel.appendLine(" *" + numberOfErrors);
+                    channel.append("\n**** " + numberOfErrors + " errors detected.");
+                }
+                else if(numberOfErrors === 1){
+                    channel.appendLine(" *" + numberOfErrors);
+                    channel.append("\n**** " + numberOfErrors + " error detected.");
+                }
+                else{
+                    channel.append("\n\n**** There are not any errors.");
                 }
                 channel.appendLine("\n\nEnd.\n");
                 if (!isCommandSuccess){
