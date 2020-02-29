@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 // n番目のsearchStringの位置を返す関数
-function indexOfNumber(text:string,searchString:string,n:number){
+function getNthKeywordIndex(text:string,keyword:string,n:number){
     var index = -1;
     for(let i = 0; i < n; i++){
-        index = text.indexOf(searchString,index+1);
+        index = text.indexOf(keyword,index+1);
     }
     return index;
 }
@@ -14,30 +14,29 @@ function returnHover(document:vscode.TextDocument, wordRange:vscode.Range, posit
     try{
         let startIndex = 0,endIndex = 0;
         // TODO:非同期へ修正
-        let textOfReference = "" + fs.readFileSync(document.fileName);
+
+        let referenceText = "" + fs.readFileSync(document.fileName);
         let word = document.getText(wordRange);
         // definitionを参照する場合
         if(word.indexOf('Def') > -1){
             // TODO:+1の修正、見直し
-            startIndex = indexOfNumber(textOfReference, 'definition', Number(word.slice('Def'.length))+1);
-            endIndex = startIndex + textOfReference.slice(startIndex).search(/\nend;/g) + '\nend;'.length;
+            startIndex = getNthKeywordIndex(referenceText, 'definition', Number(word.slice('Def'.length))+1);
+            endIndex = startIndex + referenceText.slice(startIndex).search(/\nend;/g) + '\nend;'.length;
         }
         // theoremを参照する場合
         else if(word.indexOf('Th') > -1){
-            startIndex = indexOfNumber(textOfReference, 'theorem', Number(word.slice('Th'.length))+1);
-            endIndex = startIndex + textOfReference.slice(startIndex).search(/(\nproof|;)/g) + '\n'.length;
+            startIndex = getNthKeywordIndex(referenceText, 'theorem', Number(word.slice('Th'.length))+1);
+            endIndex = startIndex + referenceText.slice(startIndex).search(/(\nproof|;)/g) + '\n'.length;
         }
         // ラベルを参照する場合
         else{
             // ホバー中の現在の行までの文字数を取得
-            let number = indexOfNumber(textOfReference,'\n', position.line);
+            let number = getNthKeywordIndex(referenceText,'\n', position.line);
             // 直前のラベルの定義元の位置を取得
-            startIndex = textOfReference.lastIndexOf(word.replace(/( |,)/, '')+':', number);
-            endIndex = startIndex + textOfReference.slice(startIndex).indexOf('\n');
-            
+            startIndex = referenceText.lastIndexOf(word.replace(/( |,)/, '')+':', number);
+            endIndex = startIndex + referenceText.slice(startIndex).indexOf('\n');
         }
-
-        let markedString = {language:"Mizar", value: textOfReference.slice(startIndex,endIndex)};
+        let markedString = {language:"Mizar", value: referenceText.slice(startIndex,endIndex)};
         let hover = new vscode.Hover(markedString, wordRange);
         return hover;
 
@@ -61,17 +60,17 @@ function returnMMLHover(document:vscode.TextDocument,wordRange:vscode.Range):vsc
         let referenceText = "" + fs.readFileSync(fileName)
             // definitionを参照する場合
             if(referenceWord.indexOf('def') > -1){
-                startIndex = indexOfNumber(referenceText, 'definition', Number(referenceWord.slice('def '.length))+1);
+                startIndex = getNthKeywordIndex(referenceText, 'definition', Number(referenceWord.slice('def '.length))+1);
                 endIndex = startIndex + referenceText.slice(startIndex).search(/\nend;/g) + '\nend;'.length;
             }
             // schemeを参照する場合
             else if(referenceWord.indexOf('sch') > -1){
-                startIndex = indexOfNumber(referenceText, 'scheme', Number(referenceWord.slice('sch '.length))+1);
+                startIndex = getNthKeywordIndex(referenceText, 'scheme', Number(referenceWord.slice('sch '.length))+1);
                 endIndex = startIndex + referenceText.slice(startIndex).search(/\nend;/g) + '\nend;'.length;
             }
             // theoremを参照する場合
             else{
-                startIndex = indexOfNumber(referenceText, 'theorem', Number(referenceWord)+1);
+                startIndex = getNthKeywordIndex(referenceText, 'theorem', Number(referenceWord)+1);
                 endIndex = startIndex + referenceText.slice(startIndex).search(/(\nproof|;)/g) + '\n'.length;
             }
             let markedString = {language:"Mizar", value: referenceText.slice(startIndex,endIndex)};
@@ -79,7 +78,6 @@ function returnMMLHover(document:vscode.TextDocument,wordRange:vscode.Range):vsc
             return hover;
     }catch(e){
         console.log(e);
-        vscode.window.showErrorMessage("Can't open file!");
         return;
     }
 }
@@ -92,7 +90,7 @@ export class HoverProvider implements vscode.HoverProvider{
         token:vscode.CancellationToken
     ):vscode.ProviderResult<vscode.Hover>{
         // ホバーの範囲を正規表現により取得
-        let wordRange;
+        let wordRange:vscode.Range | undefined;
 
         // 自身のファイル内の定義、定理、ラベルを参照する場合
         // 「Def10」「Th1」「 A1」「,A2」等を正規表現で取得する
