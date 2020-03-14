@@ -2,7 +2,13 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-// n番目のkeywordの位置を返す関数
+/** 
+ * text内のn番目のkeywordのインデックスを返す関数
+ * @param text 検索されるテキスト全文
+ * @param keyword 検索するキーワード
+ * @param n n番目を指定する変数
+ * @return n番目のキーワードのインデックス、見つからなければ-1を返す
+ */ 
 function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
     let absoluteIndex = -1;
     for (let i = 0; i < n; i++){
@@ -17,13 +23,21 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
     }
     return absoluteIndex;
 }
-// TODO:returnMMLHoverと統合しても良さそう
+// TODO:positionが不要
+/**
+ * 開いているテキスト内のホバーの情報を抽出して返す関数
+ * @param document ホバーしているドキュメント（ファイル）
+ * @param wordRange ホバー対象のワードの範囲
+ * @param position ホバーしているマウスカーソルのポジション
+ * @return 抽出したホバー情報
+ */
 function returnHover(
     document:vscode.TextDocument,
     wordRange:vscode.Range,
     position:vscode.Position
 ){
-    let p:Promise<vscode.Hover> = new Promise((resolve,reject) => {
+    let hoverInformation:Promise<vscode.Hover> = new Promise(
+    (resolve,reject) => {
         let startIndex = 0,endIndex = 0;
         let hoveredWord = document.getText(wordRange);
         fs.readFile(document.fileName,'utf8',(err,referenceText) => {
@@ -31,8 +45,7 @@ function returnHover(
                 reject(err);
             }
             // definitionを参照する場合
-            if(hoveredWord.indexOf('Def') > -1){
-                // TODO:+1の修正、見直し
+            if(hoveredWord.search(/Def/) > -1){
                 startIndex = getNthKeywordIndex(
                     referenceText,
                     /definition( |\r\n)/, 
@@ -43,7 +56,7 @@ function returnHover(
                         + '\nend;'.length;
             }
             // theoremを参照する場合
-            else if(hoveredWord.indexOf('Th') > -1){
+            else if(hoveredWord.search(/Th/) > -1){
                 startIndex = getNthKeywordIndex(
                     referenceText, 
                     /theorem( |\r\n)/, 
@@ -55,7 +68,7 @@ function returnHover(
             }
             // ラベルを参照する場合
             else{
-                // ホバー中の行までの文字数を取得
+                // ホバーしている行までの文字数を取得
                 let number = getNthKeywordIndex(
                     referenceText,
                     /\r\n/, 
@@ -67,7 +80,8 @@ function returnHover(
                     number
                 );
                 endIndex = startIndex 
-                        + referenceText.slice(startIndex).indexOf('\n');
+                        + referenceText.slice(startIndex).search(/;/)
+                        + ';'.length;
             }
             let markedString = {
                 language:"Mizar", 
@@ -76,9 +90,15 @@ function returnHover(
             resolve(new vscode.Hover(markedString, wordRange));
         });
     });
-    return p;
+    return hoverInformation;
 }
 
+/**
+ * Mizarの外部のファイルの定義・定理・スキームのホバー情報を抽出して返す関数
+ * @param document ホバーしているドキュメント（ファイル）
+ * @param wordRange ホバー対象のワードの範囲
+ * @return 抽出したホバー情報
+ */
 function returnMMLHover(
     document:vscode.TextDocument,
     wordRange:vscode.Range
@@ -92,49 +112,45 @@ function returnMMLHover(
             );
         });
     }
-    let mmlPath = path.join(process.env.MIZFILES,'mml');
-    let hoveredWord = document.getText(wordRange);
-    let [fileName, referenceWord] = hoveredWord.split(':');
-    fileName = path.join(mmlPath,fileName.toLowerCase() + '.miz');
-    let startIndex = 0,endIndex = 0;
+    let mmlPath = path.join(process.env.MIZFILES,'abstr');
 
-    let p:Promise<vscode.Hover> = new Promise ( (resolve, reject)=> {
+    let hoverInformation:Promise<vscode.Hover> = new Promise ( (resolve, reject)=> {
+        let startIndex = 0,endIndex = 0;
+        let hoveredWord = document.getText(wordRange);
+        let [fileName, referenceWord] = hoveredWord.split(':');
+        fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
         fs.readFile(fileName,'utf8', (err,referenceText) => {
             if(err){
                 reject(err);
             }
+            let wordIndex = referenceText.indexOf(hoveredWord);
             // definitionを参照する場合
-            if(referenceWord.indexOf('def') > -1){
-                startIndex = getNthKeywordIndex(
-                    referenceText, 
-                    /definition( |\r\n)/, 
-                    Number(referenceWord.slice('def '.length))
+            if (/def \d/.test(referenceWord)){
+                startIndex = referenceText.lastIndexOf(
+                    'definition', 
+                    wordIndex
                 );
-                endIndex = startIndex 
-                    + referenceText.slice(startIndex).search(/\nend;/g) 
-                    + '\nend;'.length;
+                endIndex = wordIndex + referenceText.slice(wordIndex).search(/;/)
+                            + ';'.length;
             }
             // schemeを参照する場合
-            else if(referenceWord.indexOf('sch') > -1){
-                startIndex = getNthKeywordIndex(
-                    referenceText, 
-                    /scheme( |\r\n)/, 
-                    Number(referenceWord.slice('sch '.length))
+            else if(/sch \d/.test(referenceWord)){
+                startIndex = referenceText.lastIndexOf(
+                    'scheme',
+                    wordIndex
                 );
-                endIndex = startIndex 
-                    + referenceText.slice(startIndex).search(/\nend;/g) 
-                    + '\nend;'.length;
+                endIndex = wordIndex + referenceText.slice(wordIndex).search(
+                    /(^|(?<=(\r\n|\n)))($|(?=(\r\n|\n)))/
+                );
             }
             // theoremを参照する場合
             else{
-                startIndex = getNthKeywordIndex(
-                    referenceText, 
-                    /theorem( |\r\n)/, 
-                    Number(referenceWord)
+                startIndex = referenceText.lastIndexOf(
+                    'theorem',
+                    wordIndex
                 );
-                endIndex = startIndex 
-                        + referenceText.slice(startIndex).search(/(\nproof|;)/g)
-                        + '\n'.length;
+                endIndex = wordIndex + referenceText.slice(wordIndex).search(/;/)
+                            + ';'.length;
             }
             let markedString = {
                 language:"Mizar", 
@@ -143,21 +159,30 @@ function returnMMLHover(
             resolve(new vscode.Hover(markedString, wordRange));
         });
     });
-    return p;
+    return hoverInformation;
 }
 
+/**
+ * ホバーを提供するクラス
+ * @constructor
+ * @param 
+ */
 export class HoverProvider implements vscode.HoverProvider{
-    // ホバーするたびに呼び出されるメソッド
+    /**
+     * ユーザがホバーするたびに呼び出されるメソッド
+     * @param document マウスでホバーしているドキュメント
+     * @param position ホバーしているマウスのポジション
+     * @return ホバークラスのインスタンスを返す
+     */
     public provideHover(
         document:vscode.TextDocument,
-        position: vscode.Position,
-        token:vscode.CancellationToken
+        position: vscode.Position
     ):vscode.ProviderResult<vscode.Hover>{
         let wordRange:vscode.Range | undefined;
         // 自身のファイル内の定義、定理、ラベルを参照する場合
         // 「Def10」「Th1」「 A1」「,A2」等を正規表現で取得する
         if (wordRange = document.getWordRangeAtPosition(
-                        position,/(Def\d+|Th\d+|( |,)A\d+)/) ){
+                        position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/) ){
             return returnHover(document, wordRange, position);
         }
         // 外部ファイル（MML）の定義、定理、スキームを参照する場合
@@ -169,6 +194,6 @@ export class HoverProvider implements vscode.HoverProvider{
         // ホバー対象のキーワードでない場合
         else{
             return;
-        }
+        } 
     }
 }
