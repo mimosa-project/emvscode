@@ -23,7 +23,6 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
     }
     return absoluteIndex;
 }
-// TODO:positionが不要
 /**
  * 開いているテキスト内のホバーの情報を抽出して返す関数
  * @param document ホバーしているドキュメント（ファイル）
@@ -33,8 +32,7 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
  */
 function returnHover(
     document:vscode.TextDocument,
-    wordRange:vscode.Range,
-    position:vscode.Position
+    wordRange:vscode.Range
 ){
     let hoverInformation:Promise<vscode.Hover> = new Promise(
     (resolve,reject) => {
@@ -72,7 +70,7 @@ function returnHover(
                 let number = getNthKeywordIndex(
                     referenceText,
                     /\r\n/, 
-                    position.line
+                    wordRange.start.line
                 );
                 // 直前のラベルの定義元の位置を取得
                 startIndex = referenceText.lastIndexOf(
@@ -118,11 +116,13 @@ function returnMMLHover(
         let startIndex = 0,endIndex = 0;
         let hoveredWord = document.getText(wordRange);
         let [fileName, referenceWord] = hoveredWord.split(':');
+        // .absのファイルを参照する
         fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
         fs.readFile(fileName,'utf8', (err,referenceText) => {
             if(err){
                 reject(err);
             }
+            // hoveredWordは.absファイルで一意のキーになるため、インデックスを取得する
             let wordIndex = referenceText.indexOf(hoveredWord);
             // definitionを参照する場合
             if (/def \d/.test(referenceWord)){
@@ -183,7 +183,7 @@ export class HoverProvider implements vscode.HoverProvider{
         // 「Def10」「Th1」「 A1」「,A2」等を正規表現で取得する
         if (wordRange = document.getWordRangeAtPosition(
                         position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/) ){
-            return returnHover(document, wordRange, position);
+            return returnHover(document, wordRange);
         }
         // 外部ファイル（MML）の定義、定理、スキームを参照する場合
         // 「FUNCT_2:def 1」「FINSUB_1:13」「XBOOLE_0:sch 1」等を正規表現で取得する
