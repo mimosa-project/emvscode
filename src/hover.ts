@@ -23,6 +23,7 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
     }
     return absoluteIndex;
 }
+
 /**
  * 開いているテキスト内のホバーの情報を抽出して返す関数
  * @param document ホバーしているドキュメント（ファイル）
@@ -165,7 +166,6 @@ function returnMMLHover(
 /**
  * ホバーを提供するクラス
  * @constructor
- * @param 
  */
 export class HoverProvider implements vscode.HoverProvider{
     /**
