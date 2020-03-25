@@ -3,3 +3,5 @@ node_modules
 .vscode-test/
 *.vsix
 emvscode.code-workspace
+*.png
+*.svg
