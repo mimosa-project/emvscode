@@ -15,8 +15,8 @@
         "url": "https://github.com/mimosa-project/emvscode"
     },
     "activationEvents": [
-        "onCommand:mizar-verify",
-        "onCommand:mizar-verify2",
+        "onCommand:mizar-compile",
+        "onCommand:mizar-it",
         "onCommand:mizar-irrths",
         "onCommand:mizar-relinfer",
         "onCommand:mizar-trivdemo",
@@ -27,51 +27,56 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        
         "commands": [
             {
                 "category": "Mizar",
-                "command": "mizar-verify",
-                "title": "mizar-verify"
+                "command": "mizar-compile",
+                "title": "Run Mizar",
+                "icon": {
+                    "dark": "verify.png",
+                    "light": "verify.png"
+                }
             },
             {
                 "category": "Mizar",
-                "command": "mizar-verify2",
-                "title": "mizar-verify2"
+                "command": "mizar-it",
+                "title": "mizar-it"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrths",
-                "title": "mizar-irrths"
+                "title": "Irrelevant Theorems"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relinfer",
-                "title": "mizar-relinfer"
+                "title": "Irrelevant Inferences"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-trivdemo",
-                "title": "mizar-trivdemo"
+                "title": "Trivial Proofs"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-reliters",
-                "title": "mizar-reliters"
+                "title": "Irrelevant Iterative Steps"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relprem",
-                "title": "mizar-relprem"
+                "title": "Irrelevant Premises"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrvoc",
-                "title": "mizar-irrvoc"
+                "title": "Irrelevant Vocabularies"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-inacc",
-                "title": "mizar-inacc"
+                "title": "Inaccessible Items"
             }
         ],
         "languages": [
@@ -87,6 +92,50 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-compile",
+                    "group": "navigation"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-irrths",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-relinfer",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-trivdemo",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-reliters",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-relprem",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-irrvoc",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-inacc",
+                    "group": "Irrelevant Utilities"
+                }
+            ]
+        },
         "grammars": [
             {
                 "language": "Mizar",

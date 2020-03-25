@@ -81,14 +81,14 @@ export function activate(context: vscode.ExtensionContext) {
     let diagnostics:vscode.Diagnostic[] = [];
     // mizar-verifyの処理
     let disposable1 = vscode.commands.registerCommand(
-        'mizar-verify', 
+        'mizar-compile', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier"
         )
     );
     // mizar-verify2の実行(第5引数でisVerify2をtrueにする)
     let disposable2 = vscode.commands.registerCommand(
-        'mizar-verify2', 
+        'mizar-it', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier",true
         )
