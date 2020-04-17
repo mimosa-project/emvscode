@@ -89,6 +89,11 @@ function returnMMLDefinition(
             let definitionRange = new vscode.Range(pos1,pos2);
             let definition = new vscode.Location(vscode.Uri.file(fileName),definitionRange);
             resolve(definition);
+        },
+        // openTextDocumentに失敗した時
+        () => {
+            vscode.window.showErrorMessage('not found ' + fileName);
+            reject();
         });
     });
     return definition;
