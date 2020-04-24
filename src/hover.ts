@@ -25,7 +25,7 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
 }
 
 /**
- * 開いているテキスト内のホバーの情報を抽出して返す関数
+ * 同ファイル内のホバーの情報を抽出して返す関数
  * @param document ホバーしているドキュメント（ファイル）
  * @param wordRange ホバー対象のワードの範囲
  * @param position ホバーしているマウスカーソルのポジション
@@ -39,6 +39,13 @@ function returnHover(
     (resolve,reject) => {
         let startIndex = 0,endIndex = 0;
         let hoveredWord = document.getText(wordRange);
+        vscode.workspace.openTextDocument((document.fileName))
+        .then((document) => {
+            
+        },() => {
+
+        });
+
         fs.readFile(document.fileName,'utf8',(err,referenceText) => {
             if(err){
                 reject(err);
@@ -93,7 +100,7 @@ function returnHover(
 }
 
 /**
- * Mizarの外部のファイルの定義・定理・スキームのホバー情報を抽出して返す関数
+ * 外部のファイルの定義・定理・スキームのホバー情報を抽出して返す関数
  * @param document ホバーしているドキュメント（ファイル）
  * @param wordRange ホバー対象のワードの範囲
  * @return 抽出したホバー情報
