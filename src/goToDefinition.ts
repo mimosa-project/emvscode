@@ -16,54 +16,73 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
     return absoluteIndex;
 }
 
+/**
+ * カーソル箇所の単語の定義を返す関数
+ * 同ファイル内で定義されているtheorem,definition,ラベル等の定義を返す
+ * @param document ユーザが開いているドキュメント
+ * @param wordRange カーソルのある箇所の単語範囲
+ * @return カーソル箇所の単語の定義
+ */
 function returnDefinition(
     document:vscode.TextDocument,
     wordRange:vscode.Range
-):vscode.Definition{
-    let allText = document.getText();
-    let word = document.getText(wordRange);
-    let startIndex : number = 0;
-    let endIndex : number = 0;
+):vscode.Definition
+{
+    let documentText = document.getText();
+    let selectedWord = document.getText(wordRange);
+    // 定義箇所のインデックスを格納する変数
+    let startIndex:number = 0;
+    let endIndex:number = 0;
 
-    if(word.search(/Def/) > -1){
+    if(selectedWord.search(/Def/) > -1){
         startIndex = getNthKeywordIndex(
-            allText,
+            documentText,
             /definition( |\r\n)/, 
-            Number(word.slice('Def'.length))
+            Number(selectedWord.slice('Def'.length))
         );
         endIndex = startIndex + 'definition'.length;
     }
-    else if(word.search(/Th/) > -1){
+    else if(selectedWord.search(/Th/) > -1){
         startIndex = getNthKeywordIndex(
-            allText,
+            documentText,
             /theorem( |\r\n)/, 
-            Number(word.slice('Th'.length))
+            Number(selectedWord.slice('Th'.length))
         );
         endIndex = startIndex + 'theorem'.length;
     }
     else{
         let number = getNthKeywordIndex(
-            allText,
+            documentText,
             /\r\n/, 
             wordRange.start.line
         );
         // 直前のラベルの定義元の位置を取得
-        startIndex = allText.lastIndexOf(
-            word.replace(/( |,)/, '')+':', 
+        startIndex = documentText.lastIndexOf(
+            selectedWord.replace(/( |,)/, '')+':', 
             number
         );
-        endIndex = startIndex + word.length;
+        endIndex = startIndex + selectedWord.length;
     }
 
-    let definitionRange:vscode.Range = new vscode.Range(document.positionAt(startIndex),document.positionAt(endIndex));
+    let definitionRange:vscode.Range = new vscode.Range(
+        document.positionAt(startIndex),
+        document.positionAt(endIndex)
+    );
     let definition = new vscode.Location(document.uri,definitionRange);
     return definition;
 }
 
+/**
+ * カーソル箇所の単語の定義を返す関数
+ * 外部のtheorem,definition等の定義を返す
+ * @param document ユーザが開いているドキュメント
+ * @param wordRange カーソルのある箇所の単語範囲
+ * @return カーソル箇所の単語の定義
+ */
 function returnMMLDefinition(
     document:vscode.TextDocument,
     wordRange:vscode.Range
-):Promise<vscode.Definition|vscode.DefinitionLink[]>
+):Promise<vscode.Definition>
 {
     if(process.env.MIZFILES === undefined){
         vscode.window.showErrorMessage('error!');
@@ -73,24 +92,28 @@ function returnMMLDefinition(
             );
         });
     }
-    // TODO:変数名の修正、コードの整形
+    // TODO:変数名の修正，コードの整形
     let mmlPath = path.join(process.env.MIZFILES,'abstr');
-    let definition:Promise<vscode.Definition|vscode.DefinitionLink[]> = new Promise( (resolve, reject) => {
-        let word = document.getText(wordRange);
-        let [fileName, referenceWord] = word.split(':');
-        // .absのファイルを参照する
+    let definition:Promise<vscode.Definition> = new Promise
+    ((resolve, reject) => {
+        let searchedWord = document.getText(wordRange);
+        let [fileName] = searchedWord.split(':');
+        // .absのファイルを絶対パスで格納
         fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
-        // 定義を参照するドキュメントを開く
+        // 定義を参照するドキュメントを開き，定義箇所を指定して返す
         vscode.workspace.openTextDocument(fileName).then((document) => {
             let referenceText = document.getText();
-            let index = referenceText.indexOf(word);
+            let index = referenceText.indexOf(searchedWord);
             let pos1 = document.positionAt(index);
-            let pos2 = document.positionAt(index + word.length);
+            let pos2 = document.positionAt(index + searchedWord.length);
             let definitionRange = new vscode.Range(pos1,pos2);
-            let definition = new vscode.Location(vscode.Uri.file(fileName),definitionRange);
+            let definition = new vscode.Location(
+                vscode.Uri.file(fileName),
+                definitionRange
+            );
             resolve(definition);
         },
-        // openTextDocumentに失敗した時
+        // ドキュメントが開けなかった場合，その旨を表示
         () => {
             vscode.window.showErrorMessage('not found ' + fileName);
             reject();
@@ -99,16 +122,8 @@ function returnMMLDefinition(
     return definition;
 }
 
-class LocationLink implements vscode.LocationLink{
-    targetRange:vscode.Range;
-    targetUri:vscode.Uri;
-    constructor(range:vscode.Range,uri:vscode.Uri){
-        this.targetRange = range;
-        this.targetUri = uri;
-    }
-}
-
-export class DefinitionProvider implements vscode.DefinitionProvider{
+export class DefinitionProvider implements vscode.DefinitionProvider
+{
     public provideDefinition(
         document:vscode.TextDocument,
         position:vscode.Position,
@@ -116,28 +131,9 @@ export class DefinitionProvider implements vscode.DefinitionProvider{
     ):vscode.ProviderResult<vscode.Definition|vscode.DefinitionLink[]>
     {
         let wordRange:vscode.Range | undefined;
-        if(wordRange = document.getWordRangeAtPosition(position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/)){
+        if(wordRange = document.getWordRangeAtPosition(
+                        position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/) ){
             return returnDefinition(document, wordRange);
-        }
-        else if(wordRange = document.getWordRangeAtPosition(
-                            position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/) ){
-            return returnMMLDefinition(document, wordRange);
-        }
-        else{
-            return;
-        }
-    }
-}
-
-export class DeclarationProvider implements vscode.DeclarationProvider{
-    public provideDeclaration(
-        document:vscode.TextDocument,
-        position:vscode.Position
-    ){
-
-        let wordRange:vscode.Range | undefined;
-        if(wordRange = document.getWordRangeAtPosition(position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/)){
-            return;
         }
         else if(wordRange = document.getWordRangeAtPosition(
                             position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/) ){
