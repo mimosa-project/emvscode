@@ -33,7 +33,8 @@ function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
 function returnHover(
     document:vscode.TextDocument,
     wordRange:vscode.Range
-){
+):vscode.Hover
+{
     let documentText = document.getText();
     let hoveredWord = document.getText(wordRange);
     // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
