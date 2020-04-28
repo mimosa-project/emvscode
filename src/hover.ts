@@ -36,12 +36,12 @@ function returnHover(
 ){
     let documentText = document.getText();
     let hoveredWord = document.getText(wordRange);
-    // ホバー範囲のインデックスを格納する変数
+    // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
     let startIndex:number = 0;
     let endIndex:number = 0;
 
     // definitionを参照する場合
-    if(hoveredWord.search(/Def/) > -1){
+    if(/Def/.test(hoveredWord)){
         startIndex = getNthKeywordIndex(
             documentText,
             /definition( |\r\n)/, 
@@ -52,7 +52,7 @@ function returnHover(
                 + '\nend;'.length;
     }
     // theoremを参照する場合
-    else if(hoveredWord.search(/Th/) > -1){
+    else if(/Th/.test(hoveredWord)){
         startIndex = getNthKeywordIndex(
             documentText, 
             /theorem( |\r\n)/, 
@@ -65,11 +65,7 @@ function returnHover(
     // ラベルを参照する場合
     else{
         // ホバーしている行までの文字数を取得
-        let number = getNthKeywordIndex(
-            documentText,
-            /\r\n/, 
-            wordRange.start.line
-        );
+        let number = document.offsetAt(wordRange.start);
         // 直前のラベルの定義元の位置を取得
         startIndex = documentText.lastIndexOf(
             hoveredWord.replace(/( |,)/, '')+':', 
@@ -116,7 +112,7 @@ function returnMMLHover(
         vscode.workspace.openTextDocument(fileName)
         .then((document) => {
             let documentText = document.getText();
-            // ホバー範囲のインデックスを格納する変数
+            // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
             let startIndex:number = 0;
             let endIndex:number = 0;
 
@@ -138,6 +134,7 @@ function returnMMLHover(
                     wordIndex
                 );
                 endIndex = wordIndex + documentText.slice(wordIndex).search(
+                    // 以下は改行のみの行を取得する正規表現
                     /(^|(?<=(\r\n|\n)))($|(?=(\r\n|\n)))/
                 );
             }
@@ -193,6 +190,6 @@ export class HoverProvider implements vscode.HoverProvider{
         // ホバー対象のキーワードでない場合
         else{
             return;
-        } 
+        }
     }
 }
