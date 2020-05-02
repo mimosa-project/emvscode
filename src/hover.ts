@@ -1,28 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-/** 
- * text内のn番目のkeywordのインデックスを返す関数
- * @param text 検索されるテキスト全文
- * @param keyword 検索するキーワード
- * @param n n番目を指定する変数
- * @return n番目のキーワードのインデックス、見つからなければ-1を返す
- */ 
-function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
-    let absoluteIndex = -1;
-    for (let i = 0; i < n; i++){
-        let deltaIndex = text.search(keyword);
-        if (deltaIndex !== -1){
-            absoluteIndex +=  deltaIndex + 1;
-            text = text.slice(deltaIndex+1);
-        }
-        else{
-            return -1;
-        }
-    }
-    return absoluteIndex;
-}
-
 /**
  * 同ファイル内のホバーの情報を抽出して返す関数
  * @param document ホバーしているドキュメント（ファイル）
@@ -38,40 +16,30 @@ function returnHover(
     let documentText = document.getText();
     let hoveredWord = document.getText(wordRange);
     // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
-    let startIndex:number = 0;
-    let endIndex:number = 0;
+    let startIndex:number = -1;
+    let endIndex:number = -1;
+    // 定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納
+    let definitionPattern = ":" + hoveredWord + ":";
+    let theoremPattern = "theorem " + hoveredWord + ":";
+    let labelPattern = hoveredWord + ":";
 
-    // definitionを参照する場合
-    if(/Def/.test(hoveredWord)){
-        startIndex = getNthKeywordIndex(
-            documentText,
-            /definition( |\r\n)/, 
-            Number(hoveredWord.slice('Def'.length))
-        );
-        endIndex = startIndex 
+    // 定義を参照する場合
+    if ( (startIndex = documentText.indexOf(definitionPattern)) > -1 ){
+        startIndex = documentText.lastIndexOf('definition', startIndex);
+        endIndex = startIndex
                 + documentText.slice(startIndex).search(/\nend;/g)
                 + '\nend;'.length;
     }
-    // theoremを参照する場合
-    else if(/Th/.test(hoveredWord)){
-        startIndex = getNthKeywordIndex(
-            documentText, 
-            /theorem( |\r\n)/, 
-            Number(hoveredWord.slice('Th'.length))
-        );
+    // 定理を参照する場合
+    else if ( (startIndex = documentText.indexOf(theoremPattern)) > -1 ){
         endIndex = startIndex 
                 + documentText.slice(startIndex).search(/(\nproof|;)/g)
                 + '\n'.length;
     }
     // ラベルを参照する場合
-    else{
-        // ホバーしている行までの文字数を取得
-        let number = document.offsetAt(wordRange.start);
-        // 直前のラベルの定義元の位置を取得
-        startIndex = documentText.lastIndexOf(
-            hoveredWord.replace(/( |,)/, '')+':', 
-            number
-        );
+    else if ( (startIndex = documentText.lastIndexOf(labelPattern, 
+                                        document.offsetAt(wordRange.start))) > -1 )
+    {
         endIndex = startIndex 
                 + documentText.slice(startIndex).search(/;/)
                 + ';'.length;
@@ -125,8 +93,8 @@ function returnMMLHover(
                     'definition', 
                     wordIndex
                 );
-                endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
-                            + ';'.length;
+                endIndex = wordIndex + documentText.slice(wordIndex).search(/end;/)
+                            + 'end;'.length;
             }
             // schemeを参照する場合
             else if(/sch \d/.test(referenceWord)){
@@ -134,10 +102,7 @@ function returnMMLHover(
                     'scheme',
                     wordIndex
                 );
-                endIndex = wordIndex + documentText.slice(wordIndex).search(
-                    // 以下は改行のみの行を取得する正規表現
-                    /(^|(?<=(\r\n|\n)))($|(?=(\r\n|\n)))/
-                );
+                endIndex = wordIndex + documentText.slice(wordIndex).search(/;/);
             }
             // theoremを参照する場合
             else{
@@ -176,17 +141,24 @@ export class HoverProvider implements vscode.HoverProvider{
         position: vscode.Position
     ):vscode.ProviderResult<vscode.Hover>{
         let wordRange:vscode.Range | undefined;
-        // 自身のファイル内の定義、定理、ラベルを参照する場合
-        // 「Def10」「Th1」「 A1」「,A2」等を正規表現で取得する
-        if (wordRange = document.getWordRangeAtPosition(
-                        position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/) ){
-            return returnHover(document, wordRange);
-        }
         // 外部ファイル（MML）の定義、定理、スキームを参照する場合
         // 「FUNCT_2:def 1」「FINSUB_1:13」「XBOOLE_0:sch 1」等を正規表現で取得する
-        else if (wordRange = document.getWordRangeAtPosition(
-                            position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/) ){
+        if (wordRange = document.getWordRangeAtPosition(
+                        position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/))
+        {
             return returnMMLHover(document,wordRange);
+        }
+        // 自身のファイル内の定義、定理、ラベルを参照する場合
+        // 一度，「by~」「from~」どちらかの形であるかどうかのチェックを行う
+        // 例：「by A1,A2」「from IndXSeq(A12,A1)」「from NAT_1:sch 2(A5,A6)」
+        else if (wordRange = document.getWordRangeAtPosition(position,
+                /(by\s+(\w+(,|\s|;|:)*)+|(from\s\w+(:sch \d)*\((\w+,*)+\)))/))
+        {
+            wordRange = document.getWordRangeAtPosition(position,/\w+/);
+            if (!wordRange || document.getText(wordRange) === 'by'){
+                return;
+            }
+            return returnHover(document, wordRange);
         }
         // ホバー対象のキーワードでない場合
         else{
