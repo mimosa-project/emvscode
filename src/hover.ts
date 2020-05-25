@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { mizfiles } from './mizarFunctions';
+import { Abstr } from './mizarFunctions';
 
 /**
  * 同ファイル内のホバーの情報を抽出して返す関数
@@ -11,7 +13,7 @@ import * as path from 'path';
 function returnHover(
     document:vscode.TextDocument,
     wordRange:vscode.Range
-):vscode.Hover
+):vscode.Hover | undefined
 {
     let documentText = document.getText();
     let hoveredWord = document.getText(wordRange);
@@ -27,28 +29,31 @@ function returnHover(
     if ( (startIndex = documentText.indexOf(definitionPattern)) > -1 ){
         startIndex = documentText.lastIndexOf('definition', startIndex);
         endIndex = startIndex
-                + documentText.slice(startIndex).search(/\nend;/g)
+                + documentText.slice(startIndex).search(/\send\s*;/g)
                 + '\nend;'.length;
     }
     // 定理を参照する場合
     else if ( (startIndex = documentText.indexOf(theoremPattern)) > -1 ){
         endIndex = startIndex 
-                + documentText.slice(startIndex).search(/(\nproof|;)/g)
+                + documentText.slice(startIndex).search(/(\sproof|;)/g)
                 + '\n'.length;
     }
     // ラベルを参照する場合
     else if ( (startIndex = documentText.lastIndexOf(labelPattern, 
-                                        document.offsetAt(wordRange.start))) > -1 )
+                                    document.offsetAt(wordRange.start)-1)) > -1)
     {
         endIndex = startIndex 
                 + documentText.slice(startIndex).search(/;/)
                 + ';'.length;
     }
-    let markedString = {
-        language:"Mizar", 
-        value: documentText.slice(startIndex,endIndex)
-    };
-    return new vscode.Hover(markedString, wordRange);
+    // ホバーができない場合
+    else{
+        return;
+    }
+    let markdownString = new vscode.MarkdownString();
+    markdownString.appendCodeblock(
+        documentText.slice(startIndex,endIndex), 'mizar');
+    return new vscode.Hover(markdownString, wordRange);
 }
 
 /**
@@ -62,7 +67,7 @@ function returnMMLHover(
     wordRange:vscode.Range
 ):Promise<vscode.Hover>
 {
-    if(process.env.MIZFILES === undefined){
+    if(mizfiles === undefined){
         vscode.window.showErrorMessage('error!');
         return new Promise((resolve,reject) => {
             reject(
@@ -70,11 +75,13 @@ function returnMMLHover(
             );
         });
     }
-    let mmlPath = path.join(process.env.MIZFILES,'abstr');
+    let mmlPath = path.join(mizfiles,Abstr);
 
     let hoverInformation:Promise<vscode.Hover> = new Promise 
     ((resolve, reject)=> {
-        let hoveredWord = document.getText(wordRange);
+        // 改行やスペースがある場合は置き換える
+        let hoveredWord = document.getText(wordRange).replace(/\r\n/, "");
+        hoveredWord = hoveredWord.replace(/:\s+/,":");
         let [fileName, referenceWord] = hoveredWord.split(':');
         // .absのファイルを参照する
         fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
@@ -93,7 +100,7 @@ function returnMMLHover(
                     'definition', 
                     wordIndex
                 );
-                endIndex = wordIndex + documentText.slice(wordIndex).search(/end;/)
+                endIndex = wordIndex + documentText.slice(wordIndex).search(/\send\s*;/)
                             + 'end;'.length;
             }
             // schemeを参照する場合
@@ -113,11 +120,10 @@ function returnMMLHover(
                 endIndex = wordIndex + documentText.slice(wordIndex).search(/;/)
                             + ';'.length;
             }
-            let markedString = {
-                language:"Mizar", 
-                value: documentText.slice(startIndex,endIndex)
-            };
-            resolve(new vscode.Hover(markedString, wordRange));
+            let markdownString = new vscode.MarkdownString();
+            markdownString.appendCodeblock(
+                documentText.slice(startIndex,endIndex), 'mizar');
+            resolve(new vscode.Hover(markdownString, wordRange));
         },() => {
             reject();
         });
@@ -152,7 +158,7 @@ export class HoverProvider implements vscode.HoverProvider{
         // 一度，「by~」「from~」どちらかの形であるかどうかのチェックを行う
         // 例：「by A1,A2」「from IndXSeq(A12,A1)」「from NAT_1:sch 2(A5,A6)」
         else if (wordRange = document.getWordRangeAtPosition(position,
-                /(by\s+(\w+(,|\s|;|:)*)+|(from\s\w+(:sch \d)*\((\w+,*)+\)))/))
+            /(by\s+(\w+(,|\s|:)*)+|(from\s+\w+(:sch\s+\d+)+\s*\((\w+,*)+\)))/))
         {
             wordRange = document.getWordRangeAtPosition(position,/\w+/);
             if (!wordRange || document.getText(wordRange) === 'by'){
@@ -160,9 +166,51 @@ export class HoverProvider implements vscode.HoverProvider{
             }
             return returnHover(document, wordRange);
         }
-        // ホバー対象のキーワードでない場合
-        else{
+
+        // 以降はfromの途中で改行されている場合の処理
+        let previousLine = document.lineAt(position.line - 1);
+        let currentLine = document.lineAt(position.line);
+        let nextLine = document.lineAt(position.line + 1);
+        let nearText = previousLine.text + "\r\n" 
+                        + currentLine.text + "\r\n" + nextLine.text;
+
+        // 「from ~」の形でなければホバー対象でないためリターン
+        let matched = nearText.match(/from\s+(\w+(:\s*sch\s+\d+)*)/);
+        if (matched === null){
             return;
         }
+        // previousLineよりも以前のテキストの文字数を格納する
+        let offset = 
+            document.offsetAt(new vscode.Position(position.line-1, 0)) - 1;
+
+        // 以下のような記述でスキーム(XFAMILY:sch 1)をホバーで参照する場合の処理
+        //from XFAMILY:
+        //  sch 1;
+        let index = nearText.search(/\w+:\s*sch\s+\d+/);
+        // index,offsetともに0から始まるインデックスなので1を加算
+        let startIndex = index + offset + 1;
+        let endIndex = startIndex + matched[1].length;
+        let cursorIndex = document.offsetAt(position);
+        // マウスカーソルがホバー対象の範囲内にあり、パターンに一致した表現がある場合
+        if (startIndex <= cursorIndex && cursorIndex <= endIndex && index !== -1){
+            let pos1 = document.positionAt(startIndex);
+            let pos2 = document.positionAt(endIndex);
+            let range = new vscode.Range(pos1, pos2);
+            return returnMMLHover(document, range);
+        }
+
+        // 以下のような記述でラベル(A2,A3,A1等)をホバーで参照する場合の処理
+        // from RedInd(A2,
+        //  A3,A1);
+        let relativeIndex = 
+                nearText.search(/from\s+\w+(:\s*sch\s+\d+)*\s*\(\s*(\w+,*\s*)+\)/);
+        let absoluteIndex = offset + relativeIndex + 1;
+        wordRange = document.getWordRangeAtPosition(position,/[a-zA-Z_]\w*/);
+        // ホバーが不要の場合
+        if (relativeIndex === -1 || wordRange === undefined 
+                || document.offsetAt(position) < absoluteIndex){
+            return;
+        }
+        return returnHover(document, wordRange);
     }
 }
