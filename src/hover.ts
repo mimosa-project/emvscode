@@ -150,7 +150,7 @@ export class HoverProvider implements vscode.HoverProvider{
         // 外部ファイル（MML）の定義、定理、スキームを参照する場合
         // 「FUNCT_2:def 1」「FINSUB_1:13」「XBOOLE_0:sch 1」等を正規表現で取得する
         if (wordRange = document.getWordRangeAtPosition(
-                        position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/))
+                        position,/(\w+:def\s+\d+|\w+:\d+|\w+:sch\s+\d+)/))
         {
             return returnMMLHover(document,wordRange);
         }
@@ -158,7 +158,7 @@ export class HoverProvider implements vscode.HoverProvider{
         // 一度，「by~」「from~」どちらかの形であるかどうかのチェックを行う
         // 例：「by A1,A2」「from IndXSeq(A12,A1)」「from NAT_1:sch 2(A5,A6)」
         else if (wordRange = document.getWordRangeAtPosition(position,
-            /(by\s+(\w+(,|\s|:)*)+|(from\s+\w+(:sch\s+\d+)+\s*\((\w+,*)+\)))/))
+            /(by\s+(\w+(,|\s|:)*)+|(from\s+\w+\s*\((\w+,*)+\)))/))
         {
             wordRange = document.getWordRangeAtPosition(position,/\w+/);
             if (!wordRange || document.getText(wordRange) === 'by'){
