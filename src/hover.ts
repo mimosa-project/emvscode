@@ -75,13 +75,13 @@ function returnMMLHover(
             );
         });
     }
-    let mmlPath = path.join(mizfiles,Abstr);
+    let absDir = path.join(mizfiles,Abstr);
     let hoverInformation:Promise<vscode.Hover> = new Promise 
     ((resolve, reject)=> {
         let hoveredWord = document.getText(wordRange);
         let [fileName, referenceWord] = hoveredWord.split(':');
         // .absのファイルを参照する
-        fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
+        fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
         vscode.workspace.openTextDocument(fileName)
         .then((document) => {
             let documentText = document.getText();
