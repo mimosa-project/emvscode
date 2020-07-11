@@ -4,6 +4,7 @@ import { mizar_verify, mizfiles } from './mizarFunctions';
 import { makeQueryFunction } from './mizarMessages';
 import { displayErrorLinks } from './displayErrors';
 import { DefinitionProvider} from './goToDefinition';
+import { HoverProvider } from './hover';
 
 export const queryMizarMsg = makeQueryFunction();
 
@@ -136,12 +137,11 @@ export function activate(context: vscode.ExtensionContext) {
             channel,diagnostics,diagnosticCollection,"inacc"
         )
     );
-    
+
+    let hover = new HoverProvider();
+    let disposable10 = vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover);
     let sel = {scheme:'file', languages:'Mizar'};
-    let temp = vscode.languages.registerDefinitionProvider(sel,new DefinitionProvider());
-
-    
-
+    let disposable11 = vscode.languages.registerDefinitionProvider(sel,new DefinitionProvider());
 
     context.subscriptions.push(disposable1);
     context.subscriptions.push(disposable2);
@@ -152,8 +152,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable7);
     context.subscriptions.push(disposable8);
     context.subscriptions.push(disposable9);
+    context.subscriptions.push(disposable10);
+    context.subscriptions.push(disposable11);
 
-    context.subscriptions.push(temp);
 }
 
 // this method is called when your extension is deactivated
