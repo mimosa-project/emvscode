@@ -26,11 +26,11 @@ https://code.visualstudio.com/api/working-with-extensions/testing-extension
 There are 9 commands of mizar in this extension.  
 To use these commands, you have to push (Ctrl+Shift+P) and choose a command.  
 The result of command will be displayed on output channel.  
-Except for mizar-verify2, all commands show clickable errors on output channel and Problems tabs.  
-### 1.mizar-verify
-mizar-verify runs makeenv and verifier.  
-### 2.mizar-verify2
-mizar-verify2 runs makeenv and verifier.  
+Except for mizar-it, all commands show clickable errors on output channel and Problems tabs.  
+### 1.mizar-compile
+mizar-compile runs makeenv and verifier.  
+### 2.mizar-it
+mizar-it runs makeenv and verifier.  
 This command adds error flags in the editing file.  
 This is same as traditional Mizar way.   
 ### 3.mizar-irrths

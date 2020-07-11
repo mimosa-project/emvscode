@@ -15,8 +15,8 @@
         "url": "https://github.com/mimosa-project/emvscode"
     },
     "activationEvents": [
-        "onCommand:mizar-verify",
-        "onCommand:mizar-verify2",
+        "onCommand:mizar-compile",
+        "onCommand:mizar-it",
         "onCommand:mizar-irrths",
         "onCommand:mizar-relinfer",
         "onCommand:mizar-trivdemo",
@@ -31,13 +31,13 @@
         "commands": [
             {
                 "category": "Mizar",
-                "command": "mizar-verify",
-                "title": "mizar-verify"
+                "command": "mizar-compile",
+                "title": "mizar-compile"
             },
             {
                 "category": "Mizar",
-                "command": "mizar-verify2",
-                "title": "mizar-verify2"
+                "command": "mizar-it",
+                "title": "mizar-it"
             },
             {
                 "category": "Mizar",

@@ -14,8 +14,8 @@ export const queryMizarMsg = makeQueryFunction();
  * @param diagnosticCollection
  * diagnosticsをセットするための引数、セットにより問題パネルへ表示される
  * @param command 実行するコマンドの名前
- * @param isVerify2 
- * verify2が実行されたかどうかを受け取る
+ * @param isMizarIt 
+ * mizar-itが実行されたかどうかを受け取る
  * この引数でerrflagを実行するかどうかを決定する
  * @return コマンドを実行する処理の関数
  */
@@ -24,7 +24,7 @@ function returnExecutingFunction(
     diagnostics:vscode.Diagnostic[], 
     diagnosticCollection:vscode.DiagnosticCollection, 
     command:string,
-    isVerify2:boolean=false
+    isMizarIt:boolean=false
 )
 {    
     return async () => {
@@ -53,8 +53,8 @@ function returnExecutingFunction(
         } finally {
             process.chdir(prevCwd);
         }
-        // mizar-verify2の場合はerrflagを実行する
-        if(isVerify2){
+        // mizar-itの場合はerrflagを実行する
+        if(isMizarIt){
             // errflagの実行
             let errFlag = path.join(String(mizfiles),"errflag");
             require('child_process').spawn(errFlag,[fileName]);
@@ -79,16 +79,16 @@ export function activate(context: vscode.ExtensionContext) {
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     let diagnostics:vscode.Diagnostic[] = [];
-    // mizar-verifyの処理
+    // mizar-compileの処理
     let disposable1 = vscode.commands.registerCommand(
-        'mizar-verify', 
+        'mizar-compile', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier"
         )
     );
-    // mizar-verify2の実行(第5引数でisVerify2をtrueにする)
+    // mizar-itの実行(第5引数でisMizarItをtrueにする)
     let disposable2 = vscode.commands.registerCommand(
-        'mizar-verify2', 
+        'mizar-it', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier",true
         )
