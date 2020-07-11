@@ -1,10 +1,9 @@
 import * as fs from "fs";
 
 /**
- * @fn
  * mizarファイルの環境部・記述部の行数を返す関数
  * スペースや改行だけの行は、それ以降に他の記述がなければカウントされない
- * @param (fileName) 記述部の行数を取得する対象のファイル名
+ * @param fileName 記述部の行数を取得する対象のファイル名
  * @return 環境部・記述部の行数のリスト
  */
 export function countLines(fileName:string):number[]{

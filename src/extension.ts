@@ -8,14 +8,13 @@ import { HoverProvider } from './hover';
 export const queryMizarMsg = makeQueryFunction();
 
 /**
- * @fn
  * コマンドを実行する関数を返す関数
- * @param (channel) 結果を出力するチャンネル
- * @param (diagnostics) 診断情報を詰め込むためのリスト
- * @param (diagnosticCollection) 
+ * @param channel 結果を出力するチャンネル
+ * @param diagnostics 診断情報を詰め込むためのリスト
+ * @param diagnosticCollection
  * diagnosticsをセットするための引数、セットにより問題パネルへ表示される
- * @param (command) 実行するコマンドの名前
- * @param (isVerify2) 
+ * @param command 実行するコマンドの名前
+ * @param isVerify2 
  * verify2が実行されたかどうかを受け取る
  * この引数でerrflagを実行するかどうかを決定する
  * @return コマンドを実行する処理の関数
@@ -145,12 +144,11 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
     context.subscriptions.push(disposable5);
-    context.subscriptions.push(disposable6);    
+    context.subscriptions.push(disposable6);
     context.subscriptions.push(disposable7);
     context.subscriptions.push(disposable8);
     context.subscriptions.push(disposable9);
     context.subscriptions.push(disposable10);
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}

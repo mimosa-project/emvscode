@@ -152,8 +152,7 @@ export class HoverProvider implements vscode.HoverProvider{
             return returnMMLHover(document,wordRange);
         }
         // 自身のファイル内の定義、定理、ラベルを参照する場合
-        // 例：「by A1,A2;」「from IndXSeq(A12,A1);」「from NAT_1:sch 2(A5,A6)」
-        // by A1,A2;
+        // 例：「by A1,A2」「from IndXSeq(A12,A1)」「from NAT_1:sch 2(A5,A6)」
         else if (wordRange = document.getWordRangeAtPosition(position,
             /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/))
         {

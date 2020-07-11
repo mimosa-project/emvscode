@@ -3,11 +3,10 @@ import * as vscode from 'vscode';
 export const MAX_OUTPUT = 50;
 
 /**
- * @fn
  * 項目を横並びにするために文字列の後にスペースを追加する関数
  * 指定文字数までスペースを追加する
- * @param (str) スペースを追加する文字列
- * @param (num) 何文字までスペースを追加するかを指定する数
+ * @param str スペースを追加する文字列
+ * @param num 何文字までスペースを追加するかを指定する数
  * @return num文字までスペースを追加した文字列
  */
 function padSpace(str:string, num:number=9){
@@ -16,7 +15,6 @@ function padSpace(str:string, num:number=9){
 }
 
 /**
- * @fn
  * 進度を示す関数を返す関数。
  * 項目を保存するためのitems[]、出力した数を保存するためのnumberOfProgressを保持
  * @brief 進度を示す関数を返す関数
@@ -31,12 +29,11 @@ export function makeDisplayProgress(){
     let storeNumberOfErrors = 0;
 
     /**
-     * @fn
      * プログラムの出力を受け取り、その進度を示す関数
-     * @param (channel) 出力するためのチャンネル
-     * @param (line) プログラムが出力した1行
-     * @param (numberOfArticleLines) mizarの記述部の行数
-     * @param (numberOfEnvironmentalLines) mizarの環境部の行数
+     * @param channel 出力するためのチャンネル
+     * @param line プログラムが出力した1行
+     * @param numberOfArticleLines mizarの記述部の行数
+     * @param numberOfEnvironmentalLines mizarの環境部の行数
      */
     function _displayProgress(
         channel:vscode.OutputChannel,

@@ -9,13 +9,12 @@ export const Abstr = "abstr";
 export const mizfiles = process.env.MIZFILES;
 
 /**
- * @fn
  * fileNameで与えられたファイルに対して、makeenv,commandを実行し、"success","makeenv error","command error"
  * のいずれかを返す関数
  * @brief makeenv,commandを実行する関数
- * @param (channel) 結果を出力するチャンネル
- * @param (fileName) makeenv,commandが実行する対象のファイル名
- * @param (command) 実行するコマンド、デフォルトでは"verifier"となっている
+ * @param channel 結果を出力するチャンネル
+ * @param fileName makeenv,commandが実行する対象のファイル名
+ * @param command 実行するコマンド、デフォルトでは"verifier"となっている
  * @return コマンドの実行結果を,"success","makeenv error", "command error"で返す
  */
 export async function mizar_verify(

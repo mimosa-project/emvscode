@@ -1,9 +1,17 @@
 import * as fs from 'fs';
 import { mizfiles } from './mizarFunctions';
 import * as path from 'path';
-
+/**
+ * エラー番号をエラーメッセージに変換するオブジェクトを保持するクロージャ
+ * @return クエリするための関数そのものを返す
+ */
 export function makeQueryFunction() {
     let errNo2Msg:{ [n: number]: string } = {};
+    /**
+     * エラー番号からエラーメッセージを得る関数
+     * @param _errNo クエリするためのエラー番号
+     * @return エラー番号に対応するエラーメッセージ
+     */
     function _queryMizarMsg(_errNo:number) {
         if (!Object.keys(errNo2Msg).length) {
             let key:number = 0;
