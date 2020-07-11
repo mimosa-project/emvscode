@@ -23,7 +23,8 @@
         "onCommand:mizar-reliters",
         "onCommand:mizar-relprem",
         "onCommand:mizar-irrvoc",
-        "onCommand:mizar-inacc"
+        "onCommand:mizar-inacc",
+        "onLanguage:Mizar"
     ],
     "main": "./out/extension.js",
     "contributes": {

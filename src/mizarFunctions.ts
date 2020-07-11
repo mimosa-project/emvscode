@@ -5,7 +5,7 @@ import { countLines } from './countLines';
 
 const carrier = require('carrier');
 const Makeenv = "makeenv";
-
+export const Abstr = "abstr";
 export const mizfiles = process.env.MIZFILES;
 
 /**
