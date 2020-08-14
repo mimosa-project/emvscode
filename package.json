@@ -32,47 +32,47 @@
             {
                 "category": "Mizar",
                 "command": "mizar-verify",
-                "title": "mizar-verify"
+                "title": "Mizar Compile"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-verify2",
-                "title": "mizar-verify2"
+                "title": "Run Mizar"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrths",
-                "title": "mizar-irrths"
+                "title": "Irrelevant Theorems"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relinfer",
-                "title": "mizar-relinfer"
+                "title": "Irrelevant Inferences"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-trivdemo",
-                "title": "mizar-trivdemo"
+                "title": "Trivial Proofs"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-reliters",
-                "title": "mizar-reliters"
+                "title": "Irrelevant Iterative Steps"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relprem",
-                "title": "mizar-relprem"
+                "title": "Irrelevant Premises"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrvoc",
-                "title": "mizar-irrvoc"
+                "title": "Irrelevant Vocabularies"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-inacc",
-                "title": "mizar-inacc"
+                "title": "Inaccessible Items"
             }
         ],
         "languages": [
