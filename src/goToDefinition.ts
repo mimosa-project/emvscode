@@ -1,20 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-function getNthKeywordIndex(text:string,keyword:RegExp,n:number){
-    let absoluteIndex = -1;
-    for (let i = 0; i < n; i++){
-        let deltaIndex = text.search(keyword);
-        if (deltaIndex !== -1){
-            absoluteIndex +=  deltaIndex + 1;
-            text = text.slice(deltaIndex+1);
-        }
-        else{
-            return -1;
-        }
-    }
-    return absoluteIndex;
-}
+import { Abstr } from './mizarFunctions';
 
 /**
  * カーソル箇所の単語の定義を返す関数
@@ -33,37 +19,24 @@ function returnDefinition(
     // 定義箇所のインデックスを格納する変数
     let startIndex:number = 0;
     let endIndex:number = 0;
+    // 定義・定理・ラベルの参照する箇所のパターンをそれぞれ格納
+    let definitionPattern = ":" + selectedWord + ":";
+    let theoremPattern = "theorem " + selectedWord + ":";
+    let labelPattern = selectedWord + ":";
 
-    if(selectedWord.search(/Def/) > -1){
-        startIndex = getNthKeywordIndex(
-            documentText,
-            /definition( |\r\n)/, 
-            Number(selectedWord.slice('Def'.length))
-        );
-        endIndex = startIndex + 'definition'.length;
+    // 定義を参照する場合
+    if( (startIndex = documentText.indexOf(definitionPattern)) > -1){
+        endIndex = startIndex + definitionPattern.length;
     }
-    else if(selectedWord.search(/Th/) > -1){
-        startIndex = getNthKeywordIndex(
-            documentText,
-            /theorem( |\r\n)/, 
-            Number(selectedWord.slice('Th'.length))
-        );
-        endIndex = startIndex + 'theorem'.length;
+    // 定理を参照する場合
+    else if( (startIndex = documentText.indexOf(theoremPattern)) > -1){
+        endIndex = startIndex + theoremPattern.length;
     }
-    else{
-        let number = getNthKeywordIndex(
-            documentText,
-            /\r\n/, 
-            wordRange.start.line
-        );
-        // 直前のラベルの定義元の位置を取得
-        startIndex = documentText.lastIndexOf(
-            selectedWord.replace(/( |,)/, '')+':', 
-            number
-        );
-        endIndex = startIndex + selectedWord.length;
+    // ラベルを参照する場合
+    else if ((startIndex = documentText.lastIndexOf(labelPattern, 
+            document.offsetAt(wordRange.start)-1)) > -1){
+        endIndex = startIndex + labelPattern.length;
     }
-
     let definitionRange:vscode.Range = new vscode.Range(
         document.positionAt(startIndex),
         document.positionAt(endIndex)
@@ -92,20 +65,19 @@ function returnMMLDefinition(
             );
         });
     }
-    // TODO:変数名の修正，コードの整形
-    let mmlPath = path.join(process.env.MIZFILES,'abstr');
+    let absDir = path.join(process.env.MIZFILES, Abstr);
     let definition:Promise<vscode.Definition> = new Promise
     ((resolve, reject) => {
-        let searchedWord = document.getText(wordRange);
-        let [fileName] = searchedWord.split(':');
+        let selectedWord = document.getText(wordRange);
+        let [fileName] = selectedWord.split(':');
         // .absのファイルを絶対パスで格納
-        fileName = path.join(mmlPath,fileName.toLowerCase() + '.abs');
+        fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
         // 定義を参照するドキュメントを開き，定義箇所を指定して返す
         vscode.workspace.openTextDocument(fileName).then((document) => {
             let referenceText = document.getText();
-            let index = referenceText.indexOf(searchedWord);
+            let index = referenceText.indexOf(selectedWord);
             let pos1 = document.positionAt(index);
-            let pos2 = document.positionAt(index + searchedWord.length);
+            let pos2 = document.positionAt(index + selectedWord.length);
             let definitionRange = new vscode.Range(pos1,pos2);
             let definition = new vscode.Location(
                 vscode.Uri.file(fileName),
@@ -131,13 +103,22 @@ export class DefinitionProvider implements vscode.DefinitionProvider
     ):vscode.ProviderResult<vscode.Definition|vscode.DefinitionLink[]>
     {
         let wordRange:vscode.Range | undefined;
-        if(wordRange = document.getWordRangeAtPosition(
-                        position,/(Def\d+|Th\d+|( |,)(A|Lm)\d+)/) ){
-            return returnDefinition(document, wordRange);
+        if (wordRange = document.getWordRangeAtPosition(
+            position,/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/))
+        {
+            return returnMMLDefinition(document,wordRange);
         }
-        else if(wordRange = document.getWordRangeAtPosition(
-                            position,/(\w+:def \d+|\w+:\d+|\w+:sch \d+)/) ){
-            return returnMMLDefinition(document, wordRange);
+        // 自身のファイル内の定義、定理、ラベルを参照する場合
+        // 例：「by A1,A2;」「from IndXSeq(A12,A1);」「from NAT_1:sch 2(A5,A6)」
+        // by A1,A2;
+        else if (document.getWordRangeAtPosition(position,
+            /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/))
+        {
+            wordRange = document.getWordRangeAtPosition(position,/\w+/);
+            if (!wordRange || document.getText(wordRange) === 'by'){
+                return;
+            }
+            return returnDefinition(document, wordRange);
         }
         else{
             return;
