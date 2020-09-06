@@ -2,7 +2,7 @@
     "name": "mizar-extension",
     "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
-    "version": "0.1.1",
+    "version": "0.2.1",
     "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
@@ -15,15 +15,16 @@
         "url": "https://github.com/mimosa-project/emvscode"
     },
     "activationEvents": [
-        "onCommand:mizar-compile",
-        "onCommand:mizar-it",
+        "onCommand:mizar-verify",
+        "onCommand:mizar-verify2",
         "onCommand:mizar-irrths",
         "onCommand:mizar-relinfer",
         "onCommand:mizar-trivdemo",
         "onCommand:mizar-reliters",
         "onCommand:mizar-relprem",
         "onCommand:mizar-irrvoc",
-        "onCommand:mizar-inacc"
+        "onCommand:mizar-inacc",
+        "onLanguage:Mizar"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -31,8 +32,8 @@
         "commands": [
             {
                 "category": "Mizar",
-                "command": "mizar-compile",
-                "title": "Run Mizar",
+                "command": "mizar-verify",
+                "title": "Mizar Compile",
                 "icon": {
                     "dark": "verify.png",
                     "light": "verify.png"
@@ -40,8 +41,8 @@
             },
             {
                 "category": "Mizar",
-                "command": "mizar-it",
-                "title": "mizar-it"
+                "command": "mizar-verify2",
+                "title": "Run Mizar"
             },
             {
                 "category": "Mizar",
@@ -96,8 +97,8 @@
             "editor/title": [
                 {
                     "when": "resourceLangId == Mizar",
-                    "command": "mizar-compile",
-                    "group": "navigation"
+                    "command": "mizar-verify",
+                    "group": "1_run"
                 },
                 {
                     "when": "resourceLangId == Mizar",

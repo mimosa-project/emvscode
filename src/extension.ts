@@ -3,6 +3,7 @@ import * as path from 'path';
 import { mizar_verify, mizfiles } from './mizarFunctions';
 import { makeQueryFunction } from './mizarMessages';
 import { displayErrorLinks } from './displayErrors';
+import { HoverProvider } from './hover';
 
 export const queryMizarMsg = makeQueryFunction();
 
@@ -136,6 +137,9 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
+    let hover = new HoverProvider();
+    let disposable10 = vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover);
+
     context.subscriptions.push(disposable1);
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
@@ -145,6 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable7);
     context.subscriptions.push(disposable8);
     context.subscriptions.push(disposable9);
+    context.subscriptions.push(disposable10);
 }
 
 // this method is called when your extension is deactivated
