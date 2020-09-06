@@ -76,20 +76,20 @@ function returnExecutingFunction(
 export function activate(context: vscode.ExtensionContext) {
     // verifierの実行結果を出力するチャンネル
     let channel = vscode.window.createOutputChannel('output');
-    channel.show();
+    channel.show(true);
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     let diagnostics:vscode.Diagnostic[] = [];
     // mizar-verifyの処理
     let disposable1 = vscode.commands.registerCommand(
-        'mizar-compile', 
+        'mizar-verify', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier"
         )
     );
     // mizar-verify2の実行(第5引数でisVerify2をtrueにする)
     let disposable2 = vscode.commands.registerCommand(
-        'mizar-it', 
+        'mizar-verify2', 
         returnExecutingFunction(
             channel,diagnostics,diagnosticCollection,"verifier",true
         )
