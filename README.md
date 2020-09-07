@@ -10,15 +10,13 @@
 ## Hover Information
 ![demo2](https://user-images.githubusercontent.com/32231297/92366998-d6a3ba80-f130-11ea-9f76-8117f82a03ea.gif)
 # Features
+## Implemented
 * Syntax highlight
 * Auto indent
 * Hover Information
 * Mizar commands
     * Mizar Compile
-        * "Mizar Compile" runs makeenv and verifier.
     * Run Mizar
-        * "Run Mizar" runs makeenv and verifier.
-        * This command adds error flags in the editing file. (This is same as traditional Mizar way)
     * Irrelevant Theorems
     * Irrelevant Iterative Steps
     * Irrelevant Inferences
@@ -28,7 +26,7 @@
     * Irrelevant Vocabularie
 
 
-## To be implemented
+## Under development
 * Go to definition
 * Auto completion
 
