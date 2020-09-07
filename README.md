@@ -1,58 +1,47 @@
 # Mizar extension
-VSCode Extension for Mizar
-## Getting Started
-### Prerequisites
-You have to install following softwares.
-* VisualStudioCode
-    * https://code.visualstudio.com/
-* Mizar
-    * http://mizar.org/system/#download
-* Node.js and Yeoman and VS Code Extension Generator
-    * https://code.visualstudio.com/api/get-started/your-first-extension
+* Visual Studio Code Extension for Mizar
 
-### Installing
-You can download this project from below URL.  
-https://github.com/mimosa-project/emvscode  
-## Running the tests
-In this extension, you can use "npm run test" to run the tests.  
-To run tests, you have to close all VSCode windows.  
-Please check the following.  
-https://code.visualstudio.com/api/working-with-extensions/testing-extension  
-## Deployment
-1. In VSCode, push (Ctrl+Shift+X) and search "mizar".  
-2. Click the extesnion to install.  
+# Note
+* This extension only works on Windows.
 
-## How to use this extension
-There are 9 commands of mizar in this extension.  
-To use these commands, you have to push (Ctrl+Shift+P) and choose a command.  
-The result of command will be displayed on output channel.  
-Except for mizar-verify2, all commands show clickable errors on output channel and Problems tabs.  
-### 1.mizar-verify
-mizar-verify runs makeenv and verifier.  
-### 2.mizar-verify2
-mizar-verify2 runs makeenv and verifier.  
-This command adds error flags in the editing file.  
-This is same as traditional Mizar way.   
-### 3.mizar-irrths
-mizar-irrths runs makeenv and irrths.  
-### 4.mizar-reliters
-mizar-reliters runs makeenv and reliters.  
-### 5.mizar-relinfer
-mizar-relinfer runs makeenv and relinfer.  
-### 6.mizar-relprem
-mizar-relprem runs makeenv and relprem.  
-### 7.mizar-inacc
-mizar-inacc runs makeenv and inacc.  
-### 8.mizar-trivdemo
-mizar-trivdemo runs makeenv and trivdemo.  
-### 9.mizar-irrvoc
-mizar-irrvoc runs makeenv and irrvoc.  
+# DEMO
+## Command Execution
+![demo](https://user-images.githubusercontent.com/32231297/92366947-c68bdb00-f130-11ea-8dd0-52ef3641e9cb.gif)
+## Hover Information
+![demo2](https://user-images.githubusercontent.com/32231297/92366998-d6a3ba80-f130-11ea-9f76-8117f82a03ea.gif)
+# Features
+* Syntax highlight
+* Auto indent
+* Hover Information
+* Mizar commands
+    * Mizar Compile
+        * "Mizar Compile" runs makeenv and verifier.
+    * Run Mizar
+        * "Run Mizar" runs makeenv and verifier.
+        * This command adds error flags in the editing file. (This is same as traditional Mizar way)
+    * Irrelevant Theorems
+    * Irrelevant Iterative Steps
+    * Irrelevant Inferences
+    * Irrelevant Premises
+    * Inaccessible Items
+    * Trivial Proofs
+    * Irrelevant Vocabularie
 
-## Built With
-* Visual Studio Code  
 
-## Authors
-* Hiroto Taniguchi  
+## To be implemented
+* Go to definition
+* Auto completion
 
-## License
+# Installation
+1. Open VSCode and type "Ctrl+Shift+X".  
+2. Type "mizar" in the search box and click to install.
+
+# Usage
+* Command Execution
+    * Type "Ctrl+Shift+P" (or click title bar icon) and choose a command.
+
+# Author
+* Hiroto Taniguchi
+
+# License
 This project is licensed under the MIT License - see the LICENSE file for details.  
