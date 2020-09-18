@@ -4,16 +4,17 @@
 # Note
 * This extension only works on Windows.
 
-# DEMO
-## Command Execution
+# Demo
+## Command execution
 ![demo](https://user-images.githubusercontent.com/32231297/92366947-c68bdb00-f130-11ea-8dd0-52ef3641e9cb.gif)
-## Hover Information
+
+## Syntax highlight & Auto indent
+![auto_indent](https://user-images.githubusercontent.com/32231297/93070316-af616600-f6b9-11ea-85b5-3deb887da308.gif)
+
+## Hover information
 ![demo2](https://user-images.githubusercontent.com/32231297/92366998-d6a3ba80-f130-11ea-9f76-8117f82a03ea.gif)
 # Features
 ## Implemented
-* Syntax highlight
-* Auto indent
-* Hover Information
 * Mizar commands
     * Mizar Compile
     * Run Mizar
@@ -24,11 +25,15 @@
     * Inaccessible Items
     * Trivial Proofs
     * Irrelevant Vocabularie
+* syntax highlight
+* auto indent
+* hover information
+
 
 
 ## Under development
-* Go to definition
-* Auto completion
+* go to definition
+* auto completion
 
 # Installation
 1. Open VSCode and type "Ctrl+Shift+X".  
