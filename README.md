@@ -25,7 +25,7 @@
     * Inaccessible Items
     * Trivial Proofs
     * Irrelevant Vocabularie
-* SSyntax highlight
+* Syntax highlight
 * Auto indent
 * Hover information
 
