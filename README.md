@@ -29,8 +29,6 @@
 * Auto indent
 * Hover information
 
-
-
 ### Under development
 * Go to definition
 * Auto completion
