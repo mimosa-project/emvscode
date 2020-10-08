@@ -58,6 +58,13 @@
     * This will compile and run the extension in a new Extension Development Host window
 * reference
     * https://code.visualstudio.com/api/get-started/your-first-extension
+
+## Running the tests
+* Select "Extension Tests" and run.
+
+* ![running-tests](https://user-images.githubusercontent.com/32231297/95474056-a82f2e80-09bf-11eb-9b03-250de546b38a.png)
+
+
 ## Author
 * Hiroto Taniguchi
 
