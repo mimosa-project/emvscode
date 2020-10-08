@@ -41,6 +41,23 @@
 * Command Execution
     * Type "Ctrl+Shift+P" (or click title bar icon) and choose a command.
 
+## Development
+* Clone this repositry
+    ```
+    git clone https://github.com/fpsbpkm/emvscode.git
+    ```
+* Change the current directory to emvscode directory
+    ```
+    cd emvscode
+    ```
+* Run "npm install"
+    ```
+    npm install
+    ```
+* Open VSCode and press F5
+    * This will compile and run the extension in a new Extension Development Host window
+* reference
+    * https://code.visualstudio.com/api/get-started/your-first-extension
 ## Author
 * Hiroto Taniguchi
 
