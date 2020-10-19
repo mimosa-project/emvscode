@@ -44,7 +44,7 @@
 ## Development
 * Clone this repositry
     ```
-    git clone https://github.com/fpsbpkm/emvscode.git
+    git clone https://github.com/mimosa-project/emvscode
     ```
 * Change the current directory to emvscode directory
     ```
