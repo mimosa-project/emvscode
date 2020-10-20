@@ -66,38 +66,48 @@ export async function mizar_verify(
                 numberOfArticleLines] = countLines(fileName);
             let numberOfProgress:number = 0;
             let numberOfErrors:number = 0;
+            let errorMsg = "\n**** Some errors are detected";
             let commandProcess = require('child_process').spawn(command,[fileName]);
             carrier.carry(commandProcess.stdout, (line:string) => {
                 // lineを渡してプログレスバーを表示する関数を呼び出す
                 [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
                     numberOfArticleLines,numberOfEnvironmentalLines);
+                // コマンドが出力するテキストに「*」が1つでもあれば，エラーとなる
                 if(line.indexOf('*') !== -1){
                     isCommandSuccess = false;
+                }
+                // Mizarコマンドがエラーを出力すれば，
+                // デフォルトのエラーメッセージに対して更新を行う
+                let matched = line.match(/\*\*\*\*\s.+/);
+                if (matched){
+                    errorMsg = "\n" + matched[0];
                 }
             }, null, /\r/);
             commandProcess.on('close',() => {
                 // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
-                // エラーの有無を出力
+                // エラー数を項目横に出力
                 if(numberOfErrors > 1){
                     channel.appendLine(" *" + numberOfErrors);
-                    channel.append("\n**** " + numberOfErrors + " errors detected.");
                 }
                 else if(numberOfErrors === 1){
                     channel.appendLine(" *" + numberOfErrors);
-                    channel.append("\n**** " + numberOfErrors + " error detected.");
                 }
                 else{
-                    channel.append("\n\n**** There are not any errors.");
+                    channel.appendLine("");
                 }
-                channel.appendLine("\n\nEnd.\n");
+                
                 if (!isCommandSuccess){
                     resolve('command error');
                 }
                 else{
+                    // エラーがないことが確定するため，エラーメッセージを空にする
+                    errorMsg = "";
                     resolve('success');
                 }
+                channel.appendLine("\nEnd.");
+                channel.appendLine(errorMsg);
             });
         });
     });
