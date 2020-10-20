@@ -2,7 +2,7 @@
     "name": "mizar-extension",
     "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
@@ -28,7 +28,6 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        
         "commands": [
             {
                 "category": "Mizar",
