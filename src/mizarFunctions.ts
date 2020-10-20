@@ -33,7 +33,7 @@ export async function mizar_verify(
         return "file error";
     }
     channel.clear();
-    channel.show();
+    channel.show(true);
     const displayProgress = makeDisplayProgress();
     // makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);

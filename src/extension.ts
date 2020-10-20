@@ -77,7 +77,7 @@ function returnExecutingFunction(
 export function activate(context: vscode.ExtensionContext) {
     // verifierの実行結果を出力するチャンネル
     let channel = vscode.window.createOutputChannel('output');
-    channel.show();
+    channel.show(true);
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     let diagnostics:vscode.Diagnostic[] = [];

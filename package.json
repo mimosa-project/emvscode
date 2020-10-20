@@ -2,7 +2,7 @@
     "name": "mizar-extension",
     "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
-    "version": "0.1.1",
+    "version": "0.2.2",
     "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
@@ -32,47 +32,51 @@
             {
                 "category": "Mizar",
                 "command": "mizar-verify",
-                "title": "mizar-verify"
+                "title": "Mizar Compile",
+                "icon": {
+                    "dark": "verify.png",
+                    "light": "verify.png"
+                }
             },
             {
                 "category": "Mizar",
                 "command": "mizar-verify2",
-                "title": "mizar-verify2"
+                "title": "Run Mizar"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrths",
-                "title": "mizar-irrths"
+                "title": "Irrelevant Theorems"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relinfer",
-                "title": "mizar-relinfer"
+                "title": "Irrelevant Inferences"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-trivdemo",
-                "title": "mizar-trivdemo"
+                "title": "Trivial Proofs"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-reliters",
-                "title": "mizar-reliters"
+                "title": "Irrelevant Iterative Steps"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-relprem",
-                "title": "mizar-relprem"
+                "title": "Irrelevant Premises"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-irrvoc",
-                "title": "mizar-irrvoc"
+                "title": "Irrelevant Vocabularies"
             },
             {
                 "category": "Mizar",
                 "command": "mizar-inacc",
-                "title": "mizar-inacc"
+                "title": "Inaccessible Items"
             }
         ],
         "languages": [
@@ -88,6 +92,50 @@
                 "configuration": "./language-configuration.json"
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-verify",
+                    "group": "1_run"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-irrths",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-relinfer",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-trivdemo",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-reliters",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-relprem",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-irrvoc",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-inacc",
+                    "group": "Irrelevant Utilities"
+                }
+            ]
+        },
         "grammars": [
             {
                 "language": "Mizar",
