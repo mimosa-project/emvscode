@@ -66,7 +66,7 @@ export async function mizar_verify(
                 numberOfArticleLines] = countLines(fileName);
             let numberOfProgress:number = 0;
             let numberOfErrors:number = 0;
-            let errorMsg = "\n**** Some errors are detected";
+            let errorMsg = "\n**** Some errors detected";
             let commandProcess = require('child_process').spawn(command,[fileName]);
             carrier.carry(commandProcess.stdout, (line:string) => {
                 // lineを渡してプログレスバーを表示する関数を呼び出す
@@ -76,35 +76,32 @@ export async function mizar_verify(
                 if(line.indexOf('*') !== -1){
                     isCommandSuccess = false;
                 }
-                // Mizarコマンドがエラーを出力すれば，
-                // デフォルトのエラーメッセージに対して更新を行う
+                // Mizarコマンドが以下のようなエラーを出力すれば，errorMsgを更新
+                // エラーの例1：「**** 2 errors detected」
+                // エラーの例2：「**** One irrelevant 'theorems' directive detected.」
                 let matched = line.match(/\*\*\*\*\s.+/);
                 if (matched){
                     errorMsg = "\n" + matched[0];
                 }
             }, null, /\r/);
-            commandProcess.on('close',() => {
+            commandProcess.on('close', () => {
                 // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
-                // エラー数を項目横に出力
-                if(numberOfErrors > 1){
-                    channel.appendLine(" *" + numberOfErrors);
-                }
-                else if(numberOfErrors === 1){
+                // エラーがあれば，数を項目横に出力
+                if(numberOfErrors >= 1){
                     channel.appendLine(" *" + numberOfErrors);
                 }
                 else{
                     channel.appendLine("");
                 }
-                
-                if (!isCommandSuccess){
-                    resolve('command error');
-                }
-                else{
-                    // エラーがないことが確定するため，エラーメッセージを空にする
+                if (isCommandSuccess){
+                    // エラーがないことが確定するため，errorMsgを空にする
                     errorMsg = "";
                     resolve('success');
+                }
+                else{
+                    resolve('command error');
                 }
                 channel.appendLine("\nEnd.");
                 channel.appendLine(errorMsg);
