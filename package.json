@@ -2,7 +2,7 @@
     "name": "mizar-extension",
     "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
@@ -24,11 +24,11 @@
         "onCommand:mizar-relprem",
         "onCommand:mizar-irrvoc",
         "onCommand:mizar-inacc",
+        "onCommand:mizar-chklab",
         "onLanguage:Mizar"
     ],
     "main": "./out/extension.js",
     "contributes": {
-        
         "commands": [
             {
                 "category": "Mizar",
@@ -78,6 +78,11 @@
                 "category": "Mizar",
                 "command": "mizar-inacc",
                 "title": "Inaccessible Items"
+            },
+            {
+                "category": "Mizar",
+                "command": "mizar-chklab",
+                "title": "Irrelevant Label"
             }
         ],
         "languages": [
@@ -133,6 +138,11 @@
                 {
                     "when": "resourceLangId == Mizar",
                     "command": "mizar-inacc",
+                    "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "mizar-chklab",
                     "group": "Irrelevant Utilities"
                 }
             ]

@@ -137,19 +137,27 @@ export function activate(context: vscode.ExtensionContext) {
         )
     );
 
+    let disposable10 = vscode.commands.registerCommand(
+        'mizar-chklab', 
+        returnExecutingFunction(
+            channel,diagnostics,diagnosticCollection,"chklab"
+        )
+    );
+
     let hover = new HoverProvider();
-    let disposable10 = vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover);
+    let disposable11 = vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover);
 
     context.subscriptions.push(disposable1);
     context.subscriptions.push(disposable2);
     context.subscriptions.push(disposable3);
     context.subscriptions.push(disposable4);
     context.subscriptions.push(disposable5);
-    context.subscriptions.push(disposable6);    
+    context.subscriptions.push(disposable6);
     context.subscriptions.push(disposable7);
     context.subscriptions.push(disposable8);
     context.subscriptions.push(disposable9);
     context.subscriptions.push(disposable10);
+    context.subscriptions.push(disposable11);
 }
 
 // this method is called when your extension is deactivated
