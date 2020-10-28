@@ -88,7 +88,7 @@ export async function mizar_verify(
                 // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
-                // エラーがあれば，数を項目横に出力
+                // エラーがあれば，エラー数を項目横に出力
                 if(numberOfErrors >= 1){
                     channel.appendLine(" *" + numberOfErrors);
                 }
