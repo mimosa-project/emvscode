@@ -45,7 +45,7 @@ export async function mizar_verify(
         // -Requirements
         // -Requirements  [ 34]
         // 上記のような記述は出力しないようにする
-        if(!/^-/.test(line)){
+        if (!/^-/.test(line)){
             channel.appendLine(line);
         }
         if (line.indexOf('*') !== -1){
@@ -55,7 +55,7 @@ export async function mizar_verify(
     // 非同期処理から実行結果を得るため、Promiseを利用している
     let result:Promise<string> = new Promise((resolve) => {
         makeenvProcess.on('close', () => {
-            if(!isMakeenvSuccess){
+            if (!isMakeenvSuccess){
                 resolve('makeenv error');
                 return;
             }
@@ -73,7 +73,7 @@ export async function mizar_verify(
                 [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
                     numberOfArticleLines,numberOfEnvironmentalLines);
                 // コマンドが出力するテキストに「*」が1つでもあれば，エラーとなる
-                if(line.indexOf('*') !== -1){
+                if (line.indexOf('*') !== -1){
                     isCommandSuccess = false;
                 }
                 // Mizarコマンドが以下のようなエラーを出力すれば，errorMsgを更新
@@ -89,7 +89,7 @@ export async function mizar_verify(
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
                 // エラーがあれば，エラー数を項目横に出力
-                if(numberOfErrors >= 1){
+                if (numberOfErrors >= 1){
                     channel.appendLine(" *" + numberOfErrors);
                 }
                 else{
