@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { mizfiles } from './mizarFunctions';
 import { Abstr } from './mizarFunctions';
 
 /**
@@ -25,11 +26,11 @@ function returnDefinition(
     let labelPattern = selectedWord + ":";
 
     // 定義を参照する場合
-    if( (startIndex = documentText.indexOf(definitionPattern)) > -1){
+    if ((startIndex = documentText.indexOf(definitionPattern)) > -1){
         endIndex = startIndex + definitionPattern.length;
     }
     // 定理を参照する場合
-    else if( (startIndex = documentText.indexOf(theoremPattern)) > -1){
+    else if ((startIndex = documentText.indexOf(theoremPattern)) > -1){
         endIndex = startIndex + theoremPattern.length;
     }
     // ラベルを参照する場合
@@ -41,7 +42,7 @@ function returnDefinition(
         document.positionAt(startIndex),
         document.positionAt(endIndex)
     );
-    let definition = new vscode.Location(document.uri,definitionRange);
+    let definition = new vscode.Location(document.uri, definitionRange);
     return definition;
 }
 
@@ -57,15 +58,15 @@ function returnMMLDefinition(
     wordRange:vscode.Range
 ):Promise<vscode.Definition>
 {
-    if(process.env.MIZFILES === undefined){
+    if (mizfiles === undefined){
         vscode.window.showErrorMessage('error!');
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             reject(
                 new Error('You have to set environment variable "MIZFILES"')
             );
         });
     }
-    let absDir = path.join(process.env.MIZFILES, Abstr);
+    let absDir = path.join(mizfiles, Abstr);
     let definition:Promise<vscode.Definition> = new Promise
     ((resolve, reject) => {
         let selectedWord = document.getText(wordRange);
@@ -93,9 +94,18 @@ function returnMMLDefinition(
     });
     return definition;
 }
-
+/**
+ * 定義元を提供するクラス
+ * @constructor
+ */
 export class DefinitionProvider implements vscode.DefinitionProvider
 {
+    /**
+     * ユーザが定義元を参照する際に呼び出されるメソッド
+     * @param document 定義元の参照が発生したドキュメント
+     * @param position 定義元の参照が発生した際のカーソルのポジション
+     * @return 定義元の情報（パスと範囲）を持ったインスタンスを返す
+     */
     public provideDefinition(
         document:vscode.TextDocument,
         position:vscode.Position,
@@ -103,10 +113,12 @@ export class DefinitionProvider implements vscode.DefinitionProvider
     ):vscode.ProviderResult<vscode.Definition|vscode.DefinitionLink[]>
     {
         let wordRange:vscode.Range | undefined;
+        // 外部の定義や定理，スキームを参照する場合
+        // 例：「RELSET_1:8」「ZFMISC_1:def 10」「XBOOLE_0:sch 1」
         if (wordRange = document.getWordRangeAtPosition(
-            position,/(\w+:def\s+\d+|\w+:\s*\d+|\w+:sch\s+\d+)/))
+            position, /(\w+:def\s+\d+|\w+\s*:\d+|\w+:sch\s+\d+)/))
         {
-            return returnMMLDefinition(document,wordRange);
+            return returnMMLDefinition(document, wordRange);
         }
         // 自身のファイル内の定義、定理、ラベルを参照する場合
         // 例：「by A1,A2;」「from IndXSeq(A12,A1);」「from NAT_1:sch 2(A5,A6)」
@@ -114,7 +126,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider
         else if (document.getWordRangeAtPosition(position,
             /(by\s+(\w+(,|\s|:)*)+|from\s+\w+(:sch\s+\d+)*\((\w+,*)+\))/))
         {
-            wordRange = document.getWordRangeAtPosition(position,/\w+/);
+            wordRange = document.getWordRangeAtPosition(position, /\w+/);
             if (!wordRange || document.getText(wordRange) === 'by'){
                 return;
             }
