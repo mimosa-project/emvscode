@@ -73,13 +73,13 @@ function returnMMLDefinition(
         let [fileName] = selectedWord.split(':');
         // .absのファイルを絶対パスで格納
         fileName = path.join(absDir,fileName.toLowerCase() + '.abs');
-        // 定義を参照するドキュメントを開き，定義箇所を指定して返す
+        // 定義を参照するドキュメントから，定義箇所を指定して返す
         vscode.workspace.openTextDocument(fileName).then((document) => {
-            let referenceText = document.getText();
-            let index = referenceText.indexOf(selectedWord);
-            let pos1 = document.positionAt(index);
-            let pos2 = document.positionAt(index + selectedWord.length);
-            let definitionRange = new vscode.Range(pos1,pos2);
+            let documentText = document.getText();
+            let index = documentText.indexOf(selectedWord);
+            let startPosition = document.positionAt(index);
+            let endPosition = document.positionAt(index + selectedWord.length);
+            let definitionRange = new vscode.Range(startPosition, endPosition);
             let definition = new vscode.Location(
                 vscode.Uri.file(fileName),
                 definitionRange
@@ -94,6 +94,7 @@ function returnMMLDefinition(
     });
     return definition;
 }
+
 /**
  * 定義元を提供するクラス
  * @constructor
