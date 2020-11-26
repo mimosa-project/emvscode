@@ -24,7 +24,7 @@ export async function mizar_verify(
     command:string="verifier"
 ):Promise<string>
 {
-    // Mizarコマンドのパスが通っていることを前提とする
+    // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
     let makeenv = Makeenv;
     // 拡張子を確認し、mizarファイルでなければエラーを示して終了
     if (path.extname(fileName) !== '.miz'){
