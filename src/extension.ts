@@ -44,10 +44,6 @@ function returnExecutingFunction(
             vscode.window.showErrorMessage('You have to set environment variable "MIZFILES"');
             return;
         }
-        // MIZFILESにPATHが通っていない場合は通す
-        if (String(process.env.PATH).indexOf(mizfiles) === -1){
-            process.env.PATH = mizfiles + ';' + process.env.PATH;
-        }
         // makeenvとverifierの実行
         let result = null;
         let prevCwd = process.cwd();
