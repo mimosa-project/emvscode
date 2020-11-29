@@ -24,9 +24,12 @@ export async function mizar_verify(
     command:string="verifier"
 ):Promise<string>
 {
-    // コマンドを絶対パスにしている
-    command = path.join(String(mizfiles) ,command);
-    let makeenv = path.join(String(mizfiles),Makeenv);
+    // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
+    let makeenv = Makeenv;
+    if (process.platform === 'win32'){
+        command = path.join(String(mizfiles) ,command);
+        makeenv = path.join(String(mizfiles) ,makeenv);
+    }
     // 拡張子を確認し、mizarファイルでなければエラーを示して終了
     if (path.extname(fileName) !== '.miz'){
         vscode.window.showErrorMessage('Not currently in .miz file!!');

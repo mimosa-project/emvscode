@@ -9,7 +9,8 @@ export function makeQueryFunction() {
             let key:number = 0;
             let isReadingErrorMsg:boolean = false;
             let MizarMessage = "" + fs.readFileSync(path.join(String(mizfiles),'mizar.msg'));
-            let MizarMessageList = MizarMessage.split('\r\n'||'\n');
+            // OSによって改行コードが違うため，正規表現を利用
+            let MizarMessageList = MizarMessage.split(/\r\n|[\n\r]/);
 
             // mizar.msgの中身(一部)
             // # 243
