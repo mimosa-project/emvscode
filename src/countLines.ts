@@ -12,7 +12,7 @@ export function countLines(fileName:string):number[]{
     let environmentalCounter:number = 0;
     let result:number[] = [];
     let file = "" + fs.readFileSync(fileName);
-    let lines = file.split('\r\n'||'\n');
+    let lines = file.split(/\r\n|[\n\r]/);
     let isArticleArea = false;
     for (let line of lines){
         // begin以降から記述部が始まるためisArticleAreaにtrueを設定

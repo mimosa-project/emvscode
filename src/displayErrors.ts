@@ -63,8 +63,17 @@ export function displayErrorLinks(
         let [errorLine, errorColumn, errorNumber] = line.split(' ');
         displayProblems(Number(errorLine),Number(errorColumn),
                         Number(errorNumber),uri,diagnostics,diagnosticCollection);
-        channel.appendLine(
-            "*" + errorNumber + " : " + queryMizarMsg(Number(errorNumber)) 
-            + " : " + "file:///" + fileName + "#" + errorLine);
+        // OSによってファイルのハイパーリンクの形式が変わるため分岐
+        if (process.platform === 'win32'){
+            channel.appendLine(
+                "*" + errorNumber + " : " + queryMizarMsg(Number(errorNumber)) 
+                + " : " + "file:///" + fileName + "#" + errorLine);
+        }
+        // REVIEW:Linux(Ubuntu)では動作確認済み，Macでは未確認
+        else{
+            channel.appendLine(
+                "*" + errorNumber + " : " + queryMizarMsg(Number(errorNumber)) 
+                + " : " + fileName + ":" + errorLine);
+        }
     });
 }
