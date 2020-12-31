@@ -83,6 +83,14 @@
                 "category": "Mizar",
                 "command": "mizar-chklab",
                 "title": "Irrelevant Label"
+            },
+            {
+                "command": "stop-command",
+                "title": "Stop Command",
+                "icon": {
+                    "dark": "stop.png",
+                    "light": "stop.png"
+                }
             }
         ],
         "languages": [
@@ -144,6 +152,11 @@
                     "when": "resourceLangId == Mizar",
                     "command": "mizar-chklab",
                     "group": "Irrelevant Utilities"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "stop-command",
+                    "group": "1_run"
                 }
             ]
         },

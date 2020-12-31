@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
 import { countLines } from './countLines';
+import * as cp from 'child_process';
 
 const carrier = require('carrier');
 const Makeenv = "makeenv";
@@ -21,7 +22,8 @@ export const mizfiles = process.env.MIZFILES;
 export async function mizar_verify(
     channel:vscode.OutputChannel, 
     fileName:string, 
-    command:string="verifier"
+    command:string="verifier",
+    runningCmd:{process?:cp.ChildProcess, interrupted?:boolean}
 ):Promise<string>
 {
     // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
@@ -30,13 +32,6 @@ export async function mizar_verify(
         command = path.join(String(mizfiles) ,command);
         makeenv = path.join(String(mizfiles) ,makeenv);
     }
-    // 拡張子を確認し、mizarファイルでなければエラーを示して終了
-    if (path.extname(fileName) !== '.miz'){
-        vscode.window.showErrorMessage('Not currently in .miz file!!');
-        return "file error";
-    }
-    channel.clear();
-    channel.show(true);
     const displayProgress = makeDisplayProgress();
     // makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
@@ -62,7 +57,7 @@ export async function mizar_verify(
                 resolve('makeenv error');
                 return;
             }
-            channel.appendLine("Running " + path.basename(command) 
+            channel.appendLine("Running " + path.basename(command)
                                 + " on " + fileName + '\n');
             channel.appendLine("   Start |------------------------------------------------->| End");
             let [numberOfEnvironmentalLines,
@@ -71,6 +66,8 @@ export async function mizar_verify(
             let numberOfErrors:number = 0;
             let errorMsg = "\n**** Some errors detected";
             let commandProcess = require('child_process').spawn(command,[fileName]);
+            // 実行中のプロセスを保存（ユーザが実行を中断する場合に必要となる）
+            runningCmd['process'] = commandProcess;
             carrier.carry(commandProcess.stdout, (line:string) => {
                 // lineを渡してプログレスバーを表示する関数を呼び出す
                 [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
@@ -88,6 +85,14 @@ export async function mizar_verify(
                 }
             }, null, /\r/);
             commandProcess.on('close', () => {
+                // ユーザがコマンドを中断した場合は終了
+                if (runningCmd['interrupted']){
+                    // 終了したプロセスはdeleteする
+                    delete runningCmd['process'];
+                    delete runningCmd['interrupted'];
+                    channel.clear();
+                    return;
+                }
                 // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
@@ -108,6 +113,8 @@ export async function mizar_verify(
                 }
                 channel.appendLine("\nEnd.");
                 channel.appendLine(errorMsg);
+                // 終了したプロセスはdeleteする
+                delete runningCmd['process'];
             });
         });
     });
