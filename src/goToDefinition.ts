@@ -53,7 +53,7 @@ function returnDefinition(
  * @param wordRange カーソルのある箇所の単語範囲
  * @return カーソル箇所の単語の定義
  */
-function returnMMLDefinition(
+function returnABSDefinition(
     document:vscode.TextDocument,
     wordRange:vscode.Range
 ):Promise<vscode.Definition>
@@ -119,7 +119,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider
         if (wordRange = document.getWordRangeAtPosition(
             position, /(\w+:def\s+\d+|\w+\s*:\d+|\w+:sch\s+\d+)/))
         {
-            return returnMMLDefinition(document, wordRange);
+            return returnABSDefinition(document, wordRange);
         }
         // 自身のファイル内の定義、定理、ラベルを参照する場合
         // 例：「by A1,A2;」「from IndXSeq(A12,A1);」「from NAT_1:sch 2(A5,A6)」
