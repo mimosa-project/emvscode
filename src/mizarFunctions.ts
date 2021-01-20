@@ -29,8 +29,8 @@ export async function mizar_verify(
     // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
     let makeenv = Makeenv;
     if (process.platform === 'win32'){
-        command = path.join(String(mizfiles) ,command);
-        makeenv = path.join(String(mizfiles) ,makeenv);
+        command = path.join(String(mizfiles), command);
+        makeenv = path.join(String(mizfiles), makeenv);
     }
     const displayProgress = makeDisplayProgress();
     // makeenvの実行

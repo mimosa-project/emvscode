@@ -43,13 +43,13 @@ function returnExecutingFunction(
             vscode.window.showErrorMessage('Not currently in .miz file!!');
             return;
         }
-        // コマンド実行中に，新しいコマンドが実行された場合は無視する
-        if (runningCmd['process']){
-            return;
-        }
         // 環境変数MIZFILESが未定義ならエラーメッセージを表示
         if (mizfiles === undefined){
             vscode.window.showErrorMessage('You have to set environment variable "MIZFILES"');
+            return;
+        }
+        // 既に実行中のコマンドがある場合
+        if (runningCmd['process']){
             return;
         }
         channel.clear();
