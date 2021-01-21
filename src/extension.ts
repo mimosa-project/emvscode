@@ -135,7 +135,6 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.languages.registerDefinitionProvider({scheme:'file', language:'Mizar'}, definition)
     );
 
-
     // Mizarコマンドを停止する処理
     let stopCommand = vscode.commands.registerCommand(
         'stop-command',
