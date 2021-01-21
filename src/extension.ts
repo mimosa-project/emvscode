@@ -130,6 +130,12 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover)
     );
 
+    let definition = new DefinitionProvider();
+    context.subscriptions.push(
+        vscode.languages.registerDefinitionProvider({scheme:'file', language:'Mizar'}, definition)
+    );
+
+
     // Mizarコマンドを停止する処理
     let stopCommand = vscode.commands.registerCommand(
         'stop-command',
