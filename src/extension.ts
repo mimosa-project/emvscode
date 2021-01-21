@@ -3,6 +3,7 @@ import * as path from 'path';
 import { mizar_verify, mizfiles } from './mizarFunctions';
 import { makeQueryFunction } from './mizarMessages';
 import { displayErrorLinks } from './displayErrors';
+import { DefinitionProvider} from './goToDefinition';
 import { HoverProvider } from './hover';
 import * as cp from 'child_process';
 
