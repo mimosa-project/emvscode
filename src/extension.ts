@@ -142,6 +142,8 @@ export function activate(context: vscode.ExtensionContext) {
             if (!runningCmd['process']){
                 return;
             }
+            // プロセス終了後に後処理が行われるが，
+            // 中断した場合は不要のため，中断したかどうかを保存する
             runningCmd['interrupted'] = true;
             runningCmd['process'].kill('SIGINT');
             vscode.window.showInformationMessage('Stopped!');
