@@ -62,15 +62,15 @@ function returnExecutingFunction(
         try {
             // dict,prelを読み込むため、カレントディレクトリを対象ファイルの1つ上へ変更
             process.chdir(path.join( path.dirname(fileName), '..') );
-            result = await mizar_verify(channel,fileName,command,runningCmd);
+            result = await mizar_verify(channel, fileName, command, runningCmd);
         } finally {
             process.chdir(prevCwd);
         }
         // mizar-verify2の場合はerrflagを実行する
         if(isVerify2){
             // errflagの実行
-            let errFlag = path.join(String(mizfiles),"errflag");
-            require('child_process').spawn(errFlag,[fileName]);
+            let errFlag = path.join(String(mizfiles), "errflag");
+            cp.spawn(errFlag, [fileName]);
             return;
         }
         // makeenv,verifierの結果でエラーがあれば、エラー表示関数を呼び出す処理
@@ -112,9 +112,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Mizarコマンドの登録
     for (let cmd in mizarCommands){
-        if(!mizarCommands.hasOwnProperty(cmd)) {
-            continue;
-        }
         context.subscriptions.push(
             vscode.commands.registerCommand(
                 cmd,
@@ -143,7 +140,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
             // プロセス終了後に後処理が行われるが，
-            // 中断した場合は不要のため，中断したかどうかを保存する
+            // ユーザが中断した場合，後処理は不要のため「true」を設定
             runningCmd['interrupted'] = true;
             runningCmd['process'].kill('SIGINT');
             vscode.window.showInformationMessage('Stopped!');
