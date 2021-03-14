@@ -57,7 +57,7 @@
             "patterns": [
                 {
                     "name": "constant.character.escape.Mizar",
-                    "match": "(by\\s+[^;]*|from\\s+[^;]*)"
+                    "match": "((^|\\s)by\\s+[^;]*|(^|\\s)from\\s+[^;]*)"
                 }
             ]
         }
