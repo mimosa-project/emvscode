@@ -107,11 +107,14 @@
             }
         ],
         "menus": {
-            "editor/title": [
+            "editor/title/run": [
                 {
                     "when": "resourceLangId == Mizar",
-                    "command": "mizar-verify",
-                    "group": "1_run"
+                    "command": "mizar-verify"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "stop-command"
                 },
                 {
                     "when": "resourceLangId == Mizar",
@@ -152,11 +155,6 @@
                     "when": "resourceLangId == Mizar",
                     "command": "mizar-chklab",
                     "group": "Irrelevant Utilities"
-                },
-                {
-                    "when": "resourceLangId == Mizar",
-                    "command": "stop-command",
-                    "group": "1_run"
                 }
             ]
         },
