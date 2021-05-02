@@ -24,7 +24,7 @@ export const queryMizarMsg = makeQueryFunction();
  */
 function returnExecutingFunction(
     channel:vscode.OutputChannel, 
-    runningCmd:{process?:cp.ChildProcess, interrupted?:boolean},
+    runningCmd: {process: cp.ChildProcess | null},
     diagnosticCollection:vscode.DiagnosticCollection, 
     command:string,
     isVerify2:boolean=false
@@ -105,7 +105,7 @@ const mizarCommands:StrStrDictionary = {
 export function activate(context: vscode.ExtensionContext) {
     // verifierの実行結果を出力するチャンネル
     let channel = vscode.window.createOutputChannel('output');
-    let runningCmd:{process?:cp.ChildProcess, interrupted?:boolean} = {};
+    let runningCmd: {process: cp.ChildProcess | null} = {process: null};
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
     channel.show(true);
@@ -116,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.registerCommand(
                 cmd,
                 returnExecutingFunction(
-                    channel, runningCmd, diagnosticCollection, mizarCommands[cmd], 
+                    channel, runningCmd, diagnosticCollection, mizarCommands[cmd],
                 )
             )
         );
@@ -124,24 +124,26 @@ export function activate(context: vscode.ExtensionContext) {
 
     let hover = new HoverProvider();
     context.subscriptions.push(
-        vscode.languages.registerHoverProvider({scheme: 'file', language: 'Mizar'}, hover)
+        vscode.languages.registerHoverProvider(
+            {scheme: 'file', language: 'Mizar'}, hover
+        )
     );
 
     let definition = new DefinitionProvider();
     context.subscriptions.push(
-        vscode.languages.registerDefinitionProvider({scheme:'file', language:'Mizar'}, definition)
+        vscode.languages.registerDefinitionProvider(
+            {scheme:'file', language:'Mizar'}, definition
+        )
     );
 
     // Mizarコマンドを停止する処理
     let stopCommand = vscode.commands.registerCommand(
         'stop-command',
         () => {
-            if (!runningCmd['process']){
+            console.log(runningCmd);
+            if (runningCmd['process'] === null){
                 return;
             }
-            // プロセス終了後に後処理が行われるが，
-            // ユーザが中断した場合，後処理は不要のため「true」を設定
-            runningCmd['interrupted'] = true;
             runningCmd['process'].kill('SIGINT');
             vscode.window.showInformationMessage('Stopped!');
         }

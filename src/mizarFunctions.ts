@@ -23,7 +23,7 @@ export async function mizar_verify(
     channel:vscode.OutputChannel, 
     fileName:string, 
     command:string="verifier",
-    runningCmd:{process?:cp.ChildProcess, interrupted?:boolean}
+    runningCmd: {process: cp.ChildProcess | null}
 ):Promise<string>
 {
     // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
@@ -35,6 +35,7 @@ export async function mizar_verify(
     const displayProgress = makeDisplayProgress();
     // makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
+    runningCmd['process'] = makeenvProcess;
     let isMakeenvSuccess = true;
     let isCommandSuccess = true;
     carrier.carry(makeenvProcess.stdout, (line:string) => {
@@ -84,12 +85,10 @@ export async function mizar_verify(
                     errorMsg = "\n" + matched[0];
                 }
             }, null, /\r/);
-            commandProcess.on('close', () => {
+            commandProcess.on('close', (code: number, signal: string) => {
                 // ユーザがコマンドを中断した場合は終了
-                if (runningCmd['interrupted']){
-                    // 終了したプロセスはdeleteする
-                    delete runningCmd['process'];
-                    delete runningCmd['interrupted'];
+                if (signal === 'SIGINT'){
+                    runningCmd['process'] = null;
                     channel.clear();
                     return;
                 }
@@ -113,8 +112,7 @@ export async function mizar_verify(
                 }
                 channel.appendLine("\nEnd.");
                 channel.appendLine(errorMsg);
-                // 終了したプロセスはdeleteする
-                delete runningCmd['process'];
+                runningCmd['process'] = null;
             });
         });
     });
