@@ -140,12 +140,11 @@ export function activate(context: vscode.ExtensionContext) {
     let stopCommand = vscode.commands.registerCommand(
         'stop-command',
         () => {
-            console.log(runningCmd);
             if (runningCmd['process'] === null){
                 return;
             }
             runningCmd['process'].kill('SIGINT');
-            vscode.window.showInformationMessage('Stopped!');
+            vscode.window.showInformationMessage('Command stopped!');
         }
     );
     context.subscriptions.push(stopCommand);
