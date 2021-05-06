@@ -18,13 +18,13 @@ export function displayProblems(
     errorColumn:number, 
     errorNumber:number, 
     uri:vscode.Uri,
-    diagnostics:vscode.Diagnostic[],
     diagnosticCollection:vscode.DiagnosticCollection
     )
 {
     let errorPosition = new vscode.Position(errorLine-1, errorColumn-1);
     let errorRange = new vscode.Range(errorPosition, errorPosition);
     let d = new vscode.Diagnostic(errorRange, queryMizarMsg(errorNumber));
+    let diagnostics:vscode.Diagnostic[] = [];
     diagnostics.push(d);
     diagnosticCollection.set(uri,diagnostics);
 }
@@ -41,7 +41,6 @@ export function displayErrorLinks(
     channel:vscode.OutputChannel, 
     fileName:string, 
     uri:vscode.Uri, 
-    diagnostics:vscode.Diagnostic[],
     diagnosticCollection:vscode.DiagnosticCollection
     )
 {
@@ -62,7 +61,7 @@ export function displayErrorLinks(
     reader.on("line", (line:string) => {
         let [errorLine, errorColumn, errorNumber] = line.split(' ');
         displayProblems(Number(errorLine),Number(errorColumn),
-                        Number(errorNumber),uri,diagnostics,diagnosticCollection);
+                        Number(errorNumber),uri,diagnosticCollection);
         // OSによってファイルのハイパーリンクの形式が変わるため分岐
         if (process.platform === 'win32'){
             channel.appendLine(

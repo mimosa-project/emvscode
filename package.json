@@ -2,7 +2,7 @@
     "name": "mizar-extension",
     "displayName": "Mizar extension",
     "description": "An extension for VS Code which provides support for the Mizar language.",
-    "version": "0.2.5",
+    "version": "0.3.0",
     "publisher": "fpsbpkm",
     "engines": {
         "vscode": "^1.38.0"
@@ -33,11 +33,7 @@
             {
                 "category": "Mizar",
                 "command": "mizar-verify",
-                "title": "Mizar Compile",
-                "icon": {
-                    "dark": "verify.png",
-                    "light": "verify.png"
-                }
+                "title": "Mizar Compile"
             },
             {
                 "category": "Mizar",
@@ -83,6 +79,11 @@
                 "category": "Mizar",
                 "command": "mizar-chklab",
                 "title": "Irrelevant Label"
+            },
+            {
+                "category": "Mizar",
+                "command": "stop-command",
+                "title": "Stop Command"
             }
         ],
         "languages": [
@@ -99,11 +100,14 @@
             }
         ],
         "menus": {
-            "editor/title": [
+            "editor/title/run": [
                 {
                     "when": "resourceLangId == Mizar",
-                    "command": "mizar-verify",
-                    "group": "1_run"
+                    "command": "mizar-verify"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "stop-command"
                 },
                 {
                     "when": "resourceLangId == Mizar",
@@ -172,6 +176,7 @@
     "icon": "images/mizar.png",
     "dependencies": {
         "carrier": "^0.3.0",
+        "child_process": "^1.0.2",
         "fs": "0.0.1-security",
         "path": "^0.12.7",
         "readline": "^1.3.0"

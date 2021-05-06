@@ -68,3 +68,20 @@ suite("外部のファイル内の定義、定理を参照する場合の正規�
         assert.equal(test3, "XBOOLE_0:sch 1");
     });
 });
+
+suite("シンタックスハイライトの正規表現テスト", () => {
+    let regex = /((^|\s)by\s+[^;]*|(^|\s)from\s+[^;]*)/;
+    test("byとfromのテスト", () => {
+        let test1 = getMatchedString("by A1,A2", regex);
+        assert.strictEqual(test1, "by A1,A2");
+
+        let test2 = getMatchedString("by TARSKI:2;", regex);
+        assert.strictEqual(test2, "by TARSKI:2");
+
+        let test3 = getMatchedString("[x,y] in ir by A8,ORDERS_2:def 5;", regex);
+        assert.strictEqual(test3, " by A8,ORDERS_2:def 5");
+
+        let test4 = getMatchedString("from XBOOLE_0:sch 1;", regex);
+        assert.strictEqual(test4, "from XBOOLE_0:sch 1");
+    });
+});
