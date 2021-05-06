@@ -86,33 +86,33 @@ export async function mizar_verify(
                 }
             }, null, /\r/);
             commandProcess.on('close', (code: number, signal: string) => {
-                // ユーザがコマンドを中断した場合は終了
-                if (signal === 'SIGINT'){
-                    runningCmd['process'] = null;
-                    channel.clear();
-                    return;
-                }
-                // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
-                let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
-                channel.append(appendChunk);
-                // エラーがあれば，エラー数を項目横に出力
-                if (numberOfErrors >= 1){
-                    channel.appendLine(" *" + numberOfErrors);
-                }
-                else{
-                    channel.appendLine("");
-                }
-                if (isCommandSuccess){
-                    // エラーがないことが確定するため，errorMsgを空にする
-                    errorMsg = "";
-                    resolve('success');
-                }
-                else{
-                    resolve('command error');
-                }
-                channel.appendLine("\nEnd.");
-                channel.appendLine(errorMsg);
                 runningCmd['process'] = null;
+                // ユーザがコマンドを中断した場合はクリア
+                if (signal === 'SIGINT'){
+                    channel.clear();
+                }
+                else{
+                    // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
+                    let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
+                    channel.append(appendChunk);
+                    // エラーがあれば，エラー数を項目横に出力
+                    if (numberOfErrors >= 1){
+                        channel.appendLine(" *" + numberOfErrors);
+                    }
+                    else{
+                        channel.appendLine("");
+                    }
+                    if (isCommandSuccess){
+                        // エラーがないことが確定するため，errorMsgを空にする
+                        errorMsg = "";
+                        resolve('success');
+                    }
+                    else{
+                        resolve('command error');
+                    }
+                    channel.appendLine("\nEnd.");
+                    channel.appendLine(errorMsg);
+                }
             });
         });
     });

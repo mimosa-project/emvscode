@@ -89,7 +89,7 @@ interface StrStrDictionary {
     [key: string]: string;
 }
 
-const mizarCommands:StrStrDictionary = {
+const MIZAR_COMMANDS:StrStrDictionary = {
     "mizar-verify":"verifier",
     "mizar-verify2":"verifier",
     "mizar-irrths":"irrths",
@@ -111,12 +111,12 @@ export function activate(context: vscode.ExtensionContext) {
     channel.show(true);
 
     // Mizarコマンドの登録
-    for (let cmd in mizarCommands){
+    for (let cmd in MIZAR_COMMANDS){
         context.subscriptions.push(
             vscode.commands.registerCommand(
                 cmd,
                 returnExecutingFunction(
-                    channel, runningCmd, diagnosticCollection, mizarCommands[cmd],
+                    channel, runningCmd, diagnosticCollection, MIZAR_COMMANDS[cmd],
                 )
             )
         );
