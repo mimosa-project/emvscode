@@ -5,28 +5,28 @@ import * as path from 'path';
 import { queryMizarMsg } from './extension';
 
 /**
- * @brief 問題パネルへメッセージを表示する関数
+ * @brief 問題パネルへ1つのメッセージを追加する関数
  * @param (errorLine) 何行目にエラーを示すのかを指定する引数
  * @param (errorColumn) 何文字目にエラーを示すのかを指定する引数
  * @param (errorNumber) どの種類のエラーなのかを指定する引数
- * @param (uri) エラーファイルのURIを指定
- * @param (diagnostics) 診断情報を詰め込むためのリスト
- * @param (diagnosticCollection) diagnosticsをセットするための引数、セットにより問題パネルへ表示される
+ * @param (uri) エラーファイルのURI
+ * @param (diagnostics) 診断情報リスト
+ * @param (diagnosticCollection) VSCodeの問題パネルとなるオブジェクト
  */
-export function displayProblems(
+export function pushDiagnostic(
     errorLine:number, 
     errorColumn:number, 
     errorNumber:number, 
     uri:vscode.Uri,
+    diagnostics:vscode.Diagnostic[],
     diagnosticCollection:vscode.DiagnosticCollection
     )
 {
     let errorPosition = new vscode.Position(errorLine-1, errorColumn-1);
     let errorRange = new vscode.Range(errorPosition, errorPosition);
-    let d = new vscode.Diagnostic(errorRange, queryMizarMsg(errorNumber));
-    let diagnostics:vscode.Diagnostic[] = [];
-    diagnostics.push(d);
-    diagnosticCollection.set(uri,diagnostics);
+    let diagnostic = new vscode.Diagnostic(errorRange, queryMizarMsg(errorNumber));
+    diagnostics.push(diagnostic);
+    diagnosticCollection.set(uri, diagnostics);
 }
 
 /**
@@ -51,6 +51,7 @@ export function displayErrorLinks(
     let errFile = path.join(directory,name+".err");
     let stream = fs.createReadStream(errFile, "utf-8");
     let reader = readline.createInterface({ input:stream });
+    let diagnostics:vscode.Diagnostic[] = [];
 
     //.errファイルの例：
     // 左から順に「エラーの行」「左からの文字数」「エラーの種類」を表す番号となっている
@@ -60,8 +61,8 @@ export function displayErrorLinks(
     //.errファイルを1行ずつ読み込み、lineに格納
     reader.on("line", (line:string) => {
         let [errorLine, errorColumn, errorNumber] = line.split(' ');
-        displayProblems(Number(errorLine),Number(errorColumn),
-                        Number(errorNumber),uri,diagnosticCollection);
+        pushDiagnostic(Number(errorLine), Number(errorColumn),
+                        Number(errorNumber), uri, diagnostics, diagnosticCollection);
         // OSによってファイルのハイパーリンクの形式が変わるため分岐
         if (process.platform === 'win32'){
             channel.appendLine(

@@ -54,6 +54,7 @@ export async function mizar_verify(
     // 非同期処理から実行結果を得るため、Promiseを利用している
     let result:Promise<string> = new Promise((resolve) => {
         makeenvProcess.on('close', () => {
+            runningCmd['process'] = null;
             if (!isMakeenvSuccess){
                 resolve('makeenv error');
                 return;
