@@ -38,7 +38,7 @@ function returnExecutingFunction(
         }
         // アクティブなファイルのパスを取得
         let uri = vscode.window.activeTextEditor.document.uri;
-        let fileName =vscode.window.activeTextEditor.document.fileName;
+        let fileName = vscode.window.activeTextEditor.document.fileName;
         // 拡張子を確認し、mizarファイルでなければエラーを示して終了
         if (path.extname(fileName) !== '.miz'){
             vscode.window.showErrorMessage('Not currently in .miz file!!');
@@ -56,6 +56,8 @@ function returnExecutingFunction(
         channel.clear();
         channel.show(true);
         diagnosticCollection.clear();
+        // コマンド実行前にファイルを保存
+        await vscode.window.activeTextEditor.document.save();
         // makeenvとverifierの実行
         let result = null;
         let prevCwd = process.cwd();
