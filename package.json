@@ -15,16 +15,6 @@
         "url": "https://github.com/mimosa-project/emvscode"
     },
     "activationEvents": [
-        "onCommand:mizar-verify",
-        "onCommand:mizar-verify2",
-        "onCommand:mizar-irrths",
-        "onCommand:mizar-relinfer",
-        "onCommand:mizar-trivdemo",
-        "onCommand:mizar-reliters",
-        "onCommand:mizar-relprem",
-        "onCommand:mizar-irrvoc",
-        "onCommand:mizar-inacc",
-        "onCommand:mizar-chklab",
         "onLanguage:Mizar"
     ],
     "main": "./out/extension.js",
