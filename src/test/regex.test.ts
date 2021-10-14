@@ -20,38 +20,38 @@ suite("自身のファイル内の定義、定理、ラベルを参照する場�
     test("by以降のテスト(abcmiz_0.mizより引用)", () => {
 
         let test2 = getMatchedString("by A1,A2,A3;", regex);
-        assert.equal(test2, "by A1,A2,A3");
+        assert.strictEqual(test2, "by A1,A2,A3");
 
         let test3 = getMatchedString("by A2,A3,A4,FUNCT_1:def 2;", regex);
-        assert.equal(test3, "by A2,A3,A4,FUNCT_1:def 2");
+        assert.strictEqual(test3, "by A2,A3,A4,FUNCT_1:def 2");
 
         let test4 = getMatchedString("by A1,Th13;", regex);
-        assert.equal(test4, "by A1,Th13");
+        assert.strictEqual(test4, "by A1,Th13");
     });
 
     test("from以降のテスト(abcmiz_0.mizより引用)", () => {
         let test1 = getMatchedString("from XBOOLE_0:sch 2(A5,A6);", regex);
-        assert.equal(test1, "from XBOOLE_0:sch 2(A5,A6)");
+        assert.strictEqual(test1, "from XBOOLE_0:sch 2(A5,A6)");
 
         let test2 = getMatchedString("from RECDEF_1:sch 3(A1);", regex);
-        assert.equal(test2, "from RECDEF_1:sch 3(A1)");
+        assert.strictEqual(test2, "from RECDEF_1:sch 3(A1)");
 
         let test3 = getMatchedString("from NAT_1:sch 2(A11,A7);", regex);
-        assert.equal(test3, "from NAT_1:sch 2(A11,A7)");
+        assert.strictEqual(test3, "from NAT_1:sch 2(A11,A7)");
 
         let test4 = getMatchedString("from MinimalFiniteSet(A2);", regex);
-        assert.equal(test4, "from MinimalFiniteSet(A2)");
+        assert.strictEqual(test4, "from MinimalFiniteSet(A2)");
     });
 
     test("自作テスト", () => {
         let test1 = getMatchedString("by  A1;", regex);
-        assert.equal(test1, "by  A1");
+        assert.strictEqual(test1, "by  A1");
 
         let test2 = getMatchedString("by A1,    A2,  A3;", regex);
-        assert.equal(test2, "by A1,    A2,  A3");
+        assert.strictEqual(test2, "by A1,    A2,  A3");
 
         let test3 = getMatchedString("by A1, FUNCT_1:def 2, A2;", regex);
-        assert.equal(test3, "by A1, FUNCT_1:def 2, A2");
+        assert.strictEqual(test3, "by A1, FUNCT_1:def 2, A2");
     });
 });
 
@@ -59,13 +59,13 @@ suite("外部のファイル内の定義、定理を参照する場合の正規�
     let regex = /(\w+:def\s+\d+|\w+\s*:\d+|\w+:sch\s+\d+)/;
     test("abcmiz_0.mizより引用", () => {
         let test1 = getMatchedString("RELSET_1:8", regex);
-        assert.equal(test1, "RELSET_1:8");
+        assert.strictEqual(test1, "RELSET_1:8");
 
         let test2 = getMatchedString("ZFMISC_1:def 10", regex);
-        assert.equal(test2, "ZFMISC_1:def 10");
+        assert.strictEqual(test2, "ZFMISC_1:def 10");
 
         let test3 = getMatchedString("XBOOLE_0:sch 1", regex);
-        assert.equal(test3, "XBOOLE_0:sch 1");
+        assert.strictEqual(test3, "XBOOLE_0:sch 1");
     });
 });
 
@@ -84,4 +84,56 @@ suite("シンタックスハイライトの正規表現テスト", () => {
         let test4 = getMatchedString("from XBOOLE_0:sch 1;", regex);
         assert.strictEqual(test4, "from XBOOLE_0:sch 1");
     });
+});
+
+suite("countLinesのbeginのテスト", () => {
+    // countLinesで「begin」を検索する際に，
+    // コメントアウトされた「:: begin」などを証明部の始まりと解釈しないようにするための正規表現
+    // 例：
+    // 「begin」-> OK
+    // 「begin reserve a for Nat;」-> OK
+    // 「:: begin」-> NG
+    // 「:: begin reserve a for Nat;」-> NG
+    let regex = /^(::|:::)\s*\w*\s*begin\s*\w*/;
+    test("NGパターンのテスト", () => {  
+        let test1 = ':: begin reserve a for Nat;';
+        assert.strictEqual(!regex.test(test1), false);
+
+        let test2 = ':: begin';
+        assert.strictEqual(!regex.test(test2), false);
+
+        let test3 = '::begin';
+        assert.strictEqual(!regex.test(test3), false);
+
+        let test4 = '::: begin reserve a for Nat;';
+        assert.strictEqual(!regex.test(test4), false);
+
+        let test5 = ':: aaa begin bbb';
+        assert.strictEqual(!regex.test(test5), false);
+
+        let test6 = '::: begin bbb';
+        assert.strictEqual(!regex.test(test6), false);
+
+        let test7 = ':: aaaa begin';
+        assert.strictEqual(!regex.test(test7), false);
+
+    });
+
+    test("OKパターンのテスト", () => {
+        let test1 = 'begin';
+        assert.strictEqual(!regex.test(test1), true);
+
+        let test2 = 'begin reserve a for Nat;';
+        assert.strictEqual(!regex.test(test2), true);
+
+        let test3 = '  begin ';
+        assert.strictEqual(!regex.test(test3), true);
+
+        let test4 = '  begin reserve a for Nat;';
+        assert.strictEqual(!regex.test(test4), true);
+
+        let test5 = 'begin :: something comments';
+        assert.strictEqual(!regex.test(test5), true);
+    });
+
 });
