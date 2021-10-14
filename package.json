@@ -103,7 +103,8 @@
             "editor/title/run": [
                 {
                     "when": "resourceLangId == Mizar",
-                    "command": "mizar-verify"
+                    "command": "mizar-verify",
+                    "group": "1_run"
                 },
                 {
                     "when": "resourceLangId == Mizar",
