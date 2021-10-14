@@ -17,9 +17,6 @@ export function countLines(fileName:string):number[]{
     for (let line of lines){
         // begin以降から記述部が始まるためisArticleAreaにtrueを設定
         // NOTE:コメント内に「begin」が存在しても問題が無いように，正規表現を利用
-        // NG例：
-        // 「:: begin」
-        // 「:: aaa begin bbb」
         if(!/^(::|:::)\s*\w*\s*begin\s*\w*/.test(line)){
             isArticleArea = true;
         }
