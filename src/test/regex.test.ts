@@ -94,46 +94,23 @@ suite("countLinesのbeginのテスト", () => {
     // 「begin reserve a for Nat;」-> OK
     // 「:: begin」-> NG
     // 「:: begin reserve a for Nat;」-> NG
-    let regex = /^(::|:::)\s*\w*\s*begin\s*\w*/;
-    test("NGパターンのテスト", () => {  
-        let test1 = ':: begin reserve a for Nat;';
-        assert.strictEqual(!regex.test(test1), false);
-
-        let test2 = ':: begin';
-        assert.strictEqual(!regex.test(test2), false);
-
-        let test3 = '::begin';
-        assert.strictEqual(!regex.test(test3), false);
-
-        let test4 = '::: begin reserve a for Nat;';
-        assert.strictEqual(!regex.test(test4), false);
-
-        let test5 = ':: aaa begin bbb';
-        assert.strictEqual(!regex.test(test5), false);
-
-        let test6 = '::: begin bbb';
-        assert.strictEqual(!regex.test(test6), false);
-
-        let test7 = ':: aaaa begin';
-        assert.strictEqual(!regex.test(test7), false);
-
-    });
-
+    let regex = /\bbegin\b/;
+    
     test("OKパターンのテスト", () => {
         let test1 = 'begin';
-        assert.strictEqual(!regex.test(test1), true);
+        assert.strictEqual(regex.test(test1), true);
 
         let test2 = 'begin reserve a for Nat;';
-        assert.strictEqual(!regex.test(test2), true);
+        assert.strictEqual(regex.test(test2), true);
 
         let test3 = '  begin ';
-        assert.strictEqual(!regex.test(test3), true);
+        assert.strictEqual(regex.test(test3), true);
 
         let test4 = '  begin reserve a for Nat;';
-        assert.strictEqual(!regex.test(test4), true);
+        assert.strictEqual(regex.test(test4), true);
 
         let test5 = 'begin :: something comments';
-        assert.strictEqual(!regex.test(test5), true);
+        assert.strictEqual(regex.test(test5), true);
     });
 
 });
