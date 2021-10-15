@@ -66,7 +66,7 @@ export async function mizar_verify(
                 numberOfArticleLines] = countLines(fileName);
             let numberOfProgress:number = 0;
             let numberOfErrors:number = 0;
-            let errorMsg = "\n**** Some errors detected";
+            let errorMsg = "\n**** Some errors detected.";
             let commandProcess = require('child_process').spawn(command,[fileName]);
             // 実行中のプロセスを保存（ユーザが実行を中断する場合に必要となる）
             runningCmd['process'] = commandProcess;

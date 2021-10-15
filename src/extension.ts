@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { mizar_verify, mizfiles } from './mizarFunctions';
 import { makeQueryFunction } from './mizarMessages';
-import { displayErrorLinks } from './displayErrors';
+import { setDiagnostics } from './displayErrors';
 import { DefinitionProvider} from './goToDefinition';
 import { HoverProvider } from './hover';
 import * as cp from 'child_process';
@@ -80,9 +80,7 @@ function returnExecutingFunction(
             case "success": break;
             case "makeenv error":
             case "command error":
-                displayErrorLinks(
-                    channel,fileName,uri,diagnosticCollection
-                );
+                setDiagnostics(fileName, uri, diagnosticCollection);
         }
     };
 }

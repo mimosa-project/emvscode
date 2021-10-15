@@ -2,9 +2,27 @@ import * as fs from "fs";
 
 /**
  * @fn
+ * beginが記述されている行を判定する関数
+ * 「:: begin」などコメントアウト内にbeginが含まれている場合を弾く
+ * @param line 判定される行
+ * @return コメントではない「begin」が記述された行かどうか
+ */
+export function isBeginLine(line:string):boolean{
+    if (/\bbegin\b/.test(line)) {
+        let beginIndex = line.indexOf('begin');
+        let commentIndex = line.indexOf('::');
+        if (commentIndex === -1 || beginIndex < commentIndex) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @fn
  * mizarファイルの環境部・記述部の行数を返す関数
  * スペースや改行だけの行は、それ以降に他の記述がなければカウントされない
- * @param (fileName) 記述部の行数を取得する対象のファイル名
+ * @param fileName 記述部の行数を取得する対象のファイル名
  * @return 環境部・記述部の行数のリスト
  */
 export function countLines(fileName:string):number[]{
@@ -15,15 +33,15 @@ export function countLines(fileName:string):number[]{
     let lines = file.split(/\r\n|[\n\r]/);
     let isArticleArea = false;
     for (let line of lines){
-        // begin以降から記述部が始まるためisArticleAreaにtrueを設定
-        if(line.indexOf('begin') !== -1){
-            isArticleArea = true;
+        // 記述部の行数取得のため，beginの記述行を見つけるまで判定
+        if (!isArticleArea){
+            isArticleArea = isBeginLine(line);
         }
         // 記述部の行数のカウント
-        if(isArticleArea){
+        // NOTE:「begin」から証明の記述部としてカウントしたいため「else」を利用していない
+        if (isArticleArea){
             articleCounter++;
         }
-        // 環境部の行数のカウント
         else{
             environmentalCounter++;
         }
@@ -31,7 +49,7 @@ export function countLines(fileName:string):number[]{
         // つまりアルファベットや数字が記述されている行で最も大きい行数が返され、
         // それ以降の改行やスペースのみの行はカウントされないことになる
         if(/\w+/.test(line)){
-            result = [environmentalCounter,articleCounter];
+            result = [environmentalCounter, articleCounter];
         }
     }
     return result;
