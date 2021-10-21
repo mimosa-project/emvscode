@@ -18,7 +18,7 @@ function padSpace(str:string, num:number=9){
 /**
  * @fn
  * 進度を示す関数を返す関数。
- * 項目を保存するためのitems[]、出力した数を保存するためのnumberOfProgressを保持
+ * 項目を保存するためのphases[]、出力した数を保存するためのnumberOfProgressを保持
  * @brief 進度を示す関数を返す関数
  */
 export function makeDisplayProgress(){
@@ -26,7 +26,7 @@ export function makeDisplayProgress(){
     let numberOfProgress:number = 0;
     // 出力から得た項目(Parser,MSM等)が「コマンドを実行してから初めて得た項目なのか」を判定するために使うリスト
     // コマンドの実行ごとに空リストから始まり、Parser,MSM,Analyzer等の取得した項目をpushする
-    let items:string[] = [];
+    let phases:string[] = [];
     // mizarが出力したエラーの数を保持する変数
     let storeNumberOfErrors = 0;
 
@@ -53,8 +53,8 @@ export function makeDisplayProgress(){
             return [numberOfProgress,storeNumberOfErrors];
         }
         // 実行して初めて得た項目であった時の前処理
-        if (items.indexOf(matched[1],0) === -1){
-            if(items.length !== 0){
+        if (phases.indexOf(matched[1],0) === -1){
+            if(phases.length !== 0){
                 // 直前の項目の#がMAX_OUTPUT未満であれば、足りない分を#で補完
                 let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
                 channel.append(appendChunk);
@@ -67,8 +67,8 @@ export function makeDisplayProgress(){
             // 出力の項目を横並びにするために、スペースを補完する
             let item = padSpace(matched[1]);
             channel.append(item +':');
-            // 前処理を終えた項目として、itemsにpush
-            items.push(matched[1]);
+            // 前処理を終えた項目として、phasesにpush
+            phases.push(matched[1]);
             numberOfProgress = 0;
         }
         // 現在の進度と、出力のバーの差を計算する

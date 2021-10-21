@@ -3,7 +3,8 @@ import * as path from 'path';
 import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
 import { countLines } from './countLines';
 import * as cp from 'child_process';
-
+// NOTE: 「import * as from 'carrier';」と記述すると，
+// なぜかモジュールが存在しない旨のエラーが出る
 const carrier = require('carrier');
 const Makeenv = "makeenv";
 export const Abstr = "abstr";
@@ -11,8 +12,7 @@ export const mizfiles = process.env.MIZFILES;
 
 /**
  * @fn
- * fileNameで与えられたファイルに対して、makeenv,commandを実行し、"success","makeenv error","command error"
- * のいずれかを返す関数
+ * fileNameで与えられたファイルに対して，makeenvとcommandを実行する関数
  * @brief makeenv,commandを実行する関数
  * @param (channel) 結果を出力するチャンネル
  * @param (fileName) makeenv,commandが実行する対象のファイル名
@@ -51,7 +51,8 @@ export async function mizar_verify(
             isMakeenvSuccess = false;
         }
     });
-    // 非同期処理から実行結果を得るため、Promiseを利用している
+    // 非同期処理から実行結果を得るため，Promiseを利用している
+    // NOTE: 非同期実装の理由はコマンドの出力結果を逐一取得し，そのプログレスを表示するため
     let result:Promise<string> = new Promise((resolve) => {
         makeenvProcess.on('close', () => {
             runningCmd['process'] = null;

@@ -27,11 +27,6 @@
             },
             {
                 "category": "Mizar",
-                "command": "mizar-verify2",
-                "title": "Run Mizar"
-            },
-            {
-                "category": "Mizar",
                 "command": "mizar-irrths",
                 "title": "Irrelevant Theorems"
             },
