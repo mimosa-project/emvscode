@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { makeDisplayProgress,MAX_OUTPUT } from './displayProgress';
+import { calculateProgressDiff, MAX_OUTPUT } from './calculateProgress';
 import { countLines } from './countLines';
 import * as cp from 'child_process';
 // NOTE: 「import * as from 'carrier';」と記述すると，
@@ -9,6 +9,41 @@ const carrier = require('carrier');
 const Makeenv = "makeenv";
 export const Abstr = "abstr";
 export const mizfiles = process.env.MIZFILES;
+
+/**
+ * @fn
+ * 項目を横並びにするために文字列の後にスペースを追加する関数
+ * 指定文字数までスペースを追加する
+ * @param (str) スペースを追加する文字列
+ * @param (num) 何文字までスペースを追加するかを指定する数
+ * @return num文字までスペースを追加した文字列
+ */
+ function padSpace(str:string, num:number=9){
+    let padding = " ";
+    return str + padding.repeat(num-str.length);
+}
+
+/**
+ * @fn
+ * プログレスバーの足りない「#」を追加する関数
+ * エラーがあれば，その数もプログレスバーの横にappendされる
+ */
+function addMissingHashTags(
+    channel:vscode.OutputChannel, 
+    numberOfProgress:number, 
+    numberOfErrors:number)
+{
+    if (MAX_OUTPUT < numberOfProgress){
+        return;
+    }
+    let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
+    channel.append(appendChunk);
+    // エラーがあれば、その数を出力
+    if (numberOfErrors){
+        channel.append(" *" + numberOfErrors);
+    }
+    channel.appendLine("");    
+}
 
 /**
  * @fn
@@ -28,11 +63,17 @@ export async function mizar_verify(
 {
     // Mac,LinuxではMizarコマンドのディレクトリにパスが通っていることを前提とする
     let makeenv = Makeenv;
+    // 出力している「#」の数を保存する変数
+    let numberOfProgress:number = 0;
+    // mizarが出力したエラーの数を保持する変数
+    let numberOfErrors:number = 0;
+    // Parser,MSM,Analyzer等のコマンドから取得した項目をpushするリスト
+    // 出力から得た項目(Parser,MSM等)が「コマンドを実行してから初めて得た項目なのか」を判定するために利用する
+    let phases:string[] = [];
     if (process.platform === 'win32'){
         command = path.join(String(mizfiles), command);
         makeenv = path.join(String(mizfiles), makeenv);
     }
-    const displayProgress = makeDisplayProgress();
     // makeenvの実行
     let makeenvProcess = require('child_process').spawn(makeenv,[fileName]);
     runningCmd['process'] = makeenvProcess;
@@ -63,18 +104,48 @@ export async function mizar_verify(
             channel.appendLine("Running " + path.basename(command)
                                 + " on " + fileName + '\n');
             channel.appendLine("   Start |------------------------------------------------->| End");
-            let [numberOfEnvironmentalLines,
-                numberOfArticleLines] = countLines(fileName);
-            let numberOfProgress:number = 0;
-            let numberOfErrors:number = 0;
+            let [numberOfEnvironmentalLines, numberOfArticleLines] 
+                                                    = countLines(fileName);
             let errorMsg = "\n**** Some errors detected.";
             let commandProcess = require('child_process').spawn(command,[fileName]);
-            // 実行中のプロセスを保存（ユーザが実行を中断する場合に必要となる）
+            // 実行中のプロセスを保存
+            // NOTE:ユーザが実行を中断する時に必要になる
             runningCmd['process'] = commandProcess;
             carrier.carry(commandProcess.stdout, (line:string) => {
-                // lineを渡してプログレスバーを表示する関数を呼び出す
-                [numberOfProgress,numberOfErrors] = displayProgress(channel,line,
-                    numberOfArticleLines,numberOfEnvironmentalLines);
+                // REVIEW:正規表現が正しいか確認
+                // Parser   [3482] などを正規表現として抜き出し，
+                // 「Parser」や「3482」にあたる部分をグループ化している
+                let cmdOutput = line.match(/^(\w+) +\[ *(\d+) *\**(\d*)\].*$/);
+                if (cmdOutput === null){
+                    return;
+                }
+                let phase = cmdOutput[1];
+                let numberOfParsedLines = Number(cmdOutput[2]);
+                numberOfErrors = Number(cmdOutput[3]);
+                // 実行後，初めて得た項目であった時の処理
+                // 例：Parser -> MSMに切り替わる時など
+                // REVIEW: indexOfの第2引数はいらないかも，要調査
+                if (phases.indexOf(phase) === -1){
+                    if (phases.length !== 0){
+                        // 直前の項目の#がMAX_OUTPUT未満であれば，足りない分の「#」を追加
+                        addMissingHashTags(channel, numberOfProgress, numberOfErrors);
+                    }
+                    // 出力の項目を横並びにするために，スペースを補完する
+                    channel.append(padSpace(phase) +':');
+                    // OutputChannelに追加した項目として，phasesにpush
+                    phases.push(phase);
+                    // 新しい項目なので，プログレスを初期化する
+                    numberOfProgress = 0;
+                }
+                // 進捗の差（「#」の数）を計算
+                let progressDiff = calculateProgressDiff(
+                                        numberOfArticleLines, 
+                                        numberOfEnvironmentalLines, 
+                                        numberOfParsedLines,
+                                        numberOfProgress);
+                let appendChunk = "#".repeat(progressDiff);
+                channel.append(appendChunk);
+                numberOfProgress += progressDiff;
                 // コマンドが出力するテキストに「*」が1つでもあれば，エラーとなる
                 if (line.indexOf('*') !== -1){
                     isCommandSuccess = false;
@@ -94,16 +165,8 @@ export async function mizar_verify(
                     channel.clear();
                 }
                 else{
-                    // 最後の項目のプログレスバーがMAX_OUTPUT未満であれば、足りない分を補完
-                    let appendChunk = "#".repeat(MAX_OUTPUT-numberOfProgress);
-                    channel.append(appendChunk);
-                    // エラーがあれば，エラー数を項目横に出力
-                    if (numberOfErrors >= 1){
-                        channel.appendLine(" *" + numberOfErrors);
-                    }
-                    else{
-                        channel.appendLine("");
-                    }
+                    // プログレスバーがMAX_OUTPUT未満であれば，足りない分の補完とエラー数の追加
+                    addMissingHashTags(channel, numberOfProgress, numberOfErrors);
                     if (isCommandSuccess){
                         // エラーがないことが確定するため，errorMsgを空にする
                         errorMsg = "";
@@ -118,5 +181,5 @@ export async function mizar_verify(
             });
         });
     });
-    return await result;
+    return result;
 }
