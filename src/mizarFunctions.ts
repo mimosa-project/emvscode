@@ -14,8 +14,8 @@ export const mizfiles = process.env.MIZFILES;
  * @fn
  * 項目を横並びにするために文字列の後にスペースを追加する関数
  * 指定文字数までスペースを追加する
- * @param (str) スペースを追加する文字列
- * @param (num) 何文字までスペースを追加するかを指定する数
+ * @param str スペースを追加する文字列
+ * @param num 何文字までスペースを追加するかを指定する数
  * @return num文字までスペースを追加した文字列
  */
  function padSpace(str:string, num:number=9){
@@ -27,6 +27,9 @@ export const mizfiles = process.env.MIZFILES;
  * @fn
  * プログレスバーの足りない「#」を追加する関数
  * エラーがあれば，その数もプログレスバーの横にappendされる
+ * @param channel 出力先のチャンネル
+ * @param numberOfProgress プログレス数（「#」の数）
+ * @param numberOfErrors エラー数，プログレス横に出力される
  */
 function addMissingHashTags(
     channel:vscode.OutputChannel, 
@@ -49,9 +52,9 @@ function addMissingHashTags(
  * @fn
  * fileNameで与えられたファイルに対して，makeenvとcommandを実行する関数
  * @brief makeenv,commandを実行する関数
- * @param (channel) 結果を出力するチャンネル
- * @param (fileName) makeenv,commandが実行する対象のファイル名
- * @param (command) 実行するコマンド、デフォルトでは"verifier"となっている
+ * @param channel 結果を出力するチャンネル
+ * @param fileName makeenv,commandが実行する対象のファイル名
+ * @param command 実行するコマンド、デフォルトでは"verifier"となっている
  * @return コマンドの実行結果を,"success","makeenv error", "command error"で返す
  */
 export async function mizar_verify(
@@ -113,8 +116,8 @@ export async function mizar_verify(
             runningCmd['process'] = commandProcess;
             carrier.carry(commandProcess.stdout, (line:string) => {
                 // REVIEW:正規表現が正しいか確認
-                // Parser   [3482] などを正規表現として抜き出し，
-                // 「Parser」や「3482」にあたる部分をグループ化している
+                // Parser   [3482 *2] などを正規表現として抜き出し，
+                // 「Parser」や「3482」「2」にあたる部分をグループ化している
                 let cmdOutput = line.match(/^(\w+) +\[ *(\d+) *\**(\d*)\].*$/);
                 if (cmdOutput === null){
                     return;
@@ -122,9 +125,7 @@ export async function mizar_verify(
                 let phase = cmdOutput[1];
                 let numberOfParsedLines = Number(cmdOutput[2]);
                 numberOfErrors = Number(cmdOutput[3]);
-                // 実行後，初めて得た項目であった時の処理
-                // 例：Parser -> MSMに切り替わる時など
-                // REVIEW: indexOfの第2引数はいらないかも，要調査
+                // Parser -> MSMに切り替わる時など，初めての項目で実行される
                 if (phases.indexOf(phase) === -1){
                     if (phases.length !== 0){
                         // 直前の項目の#がMAX_OUTPUT未満であれば，足りない分の「#」を追加
@@ -151,8 +152,7 @@ export async function mizar_verify(
                     isCommandSuccess = false;
                 }
                 // Mizarコマンドが以下のようなエラーを出力すれば，errorMsgを更新
-                // エラーの例1：「**** 2 errors detected」
-                // エラーの例2：「**** One irrelevant 'theorems' directive detected.」
+                // エラーの例：「**** One irrelevant 'theorems' directive detected.」
                 let matched = line.match(/\*\*\*\*\s.+/);
                 if (matched){
                     errorMsg = "\n" + matched[0];

@@ -96,7 +96,7 @@ const MIZAR_COMMANDS:StrStrDictionary = {
 
 export function activate(context: vscode.ExtensionContext) {
     // verifierの実行結果を出力するチャンネル
-    let channel = vscode.window.createOutputChannel('output');
+    let channel = vscode.window.createOutputChannel('Mizar output');
     let runningCmd: {process: cp.ChildProcess | null} = {process: null};
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
