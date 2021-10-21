@@ -17,7 +17,6 @@
 ### Implemented
 * Mizar commands
     * Mizar Compile
-    * Run Mizar
     * Irrelevant Theorems
     * Irrelevant Iterative Steps
     * Irrelevant Inferences
@@ -25,6 +24,7 @@
     * Inaccessible Items
     * Trivial Proofs
     * Irrelevant Vocabularie
+    * Irrelevant Label
 * Syntax highlight
 * Auto indent
 * Hover information
