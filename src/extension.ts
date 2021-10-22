@@ -68,13 +68,6 @@ function returnExecutingFunction(
         } finally {
             process.chdir(prevCwd);
         }
-        // mizar-verify2の場合はerrflagを実行する
-        if(isVerify2){
-            // errflagの実行
-            let errFlag = path.join(String(mizfiles), "errflag");
-            cp.spawn(errFlag, [fileName]);
-            return;
-        }
         // makeenv,verifierの結果でエラーがあれば、エラー表示関数を呼び出す処理
         switch(result){
             case "success": break;
@@ -91,7 +84,6 @@ interface StrStrDictionary {
 
 const MIZAR_COMMANDS:StrStrDictionary = {
     "mizar-verify":"verifier",
-    "mizar-verify2":"verifier",
     "mizar-irrths":"irrths",
     "mizar-relinfer":"relinfer",
     "mizar-trivdemo":"trivdemo",
@@ -104,7 +96,7 @@ const MIZAR_COMMANDS:StrStrDictionary = {
 
 export function activate(context: vscode.ExtensionContext) {
     // verifierの実行結果を出力するチャンネル
-    let channel = vscode.window.createOutputChannel('output');
+    let channel = vscode.window.createOutputChannel('Mizar output');
     let runningCmd: {process: cp.ChildProcess | null} = {process: null};
     let diagnosticCollection = 
         vscode.languages.createDiagnosticCollection('mizar');
