@@ -70,7 +70,9 @@ function returnExecutingFunction(
         }
         // makeenv,verifierの結果でエラーがあれば、エラー表示関数を呼び出す処理
         switch(result){
-            case "success": break;
+            // NOTE:"success"と判定された場合でも，
+            //      最も確実に判定できる「.err」ファイルはチェックすべき
+            case "success":
             case "makeenv error":
             case "command error":
                 setDiagnostics(fileName, uri, diagnosticCollection);
