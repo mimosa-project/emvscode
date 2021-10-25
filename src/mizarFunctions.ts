@@ -115,6 +115,12 @@ export async function mizar_verify(
             // NOTE:ユーザが実行を中断する時に必要になる
             runningCmd['process'] = commandProcess;
             carrier.carry(commandProcess.stdout, (line:string) => {
+                // コマンドが出力するテキストに「*」が1つでもあれば，エラーとなる
+                // NOTE:コマンドによっては「**** One irrelevant 'theorems' directive detected.」
+                //      のようなメッセージだけで「*」が出力される場合があるため，最優先でチェックする
+                if (line.indexOf('*') !== -1){
+                    isCommandSuccess = false;
+                }
                 // REVIEW:正規表現が正しいか確認
                 // Parser   [3482 *2] などを正規表現として抜き出し，
                 // 「Parser」や「3482」「2」にあたる部分をグループ化している
@@ -147,10 +153,6 @@ export async function mizar_verify(
                 let appendChunk = "#".repeat(progressDiff);
                 channel.append(appendChunk);
                 numberOfProgress += progressDiff;
-                // コマンドが出力するテキストに「*」が1つでもあれば，エラーとなる
-                if (line.indexOf('*') !== -1){
-                    isCommandSuccess = false;
-                }
                 // Mizarコマンドが以下のようなエラーを出力すれば，errorMsgを更新
                 // エラーの例：「**** One irrelevant 'theorems' directive detected.」
                 let matched = line.match(/\*\*\*\*\s.+/);
