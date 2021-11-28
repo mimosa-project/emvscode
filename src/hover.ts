@@ -95,7 +95,7 @@ function returnMMLHover (
               wordIndex
             )
             endIndex = wordIndex +
-                            documentText.slice(wordIndex).search(/\send\s*;/) +
+                            documentText.slice(wordIndex).search(/end\s*;/) +
                             'end;'.length
           }
           // schemeを参照する場合
