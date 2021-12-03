@@ -5,6 +5,7 @@ import {makeQueryFunction} from './mizarMessages';
 import {setDiagnostics} from './displayErrors';
 import {DefinitionProvider} from './goToDefinition';
 import {HoverProvider} from './hover';
+import {formatMizar} from './formatter';
 import * as cp from 'child_process';
 
 export const queryMizarMsg = makeQueryFunction();
@@ -134,6 +135,11 @@ export function activate(context: vscode.ExtensionContext) {
       },
   );
   context.subscriptions.push(stopCommand);
+  const formatter = vscode.commands.registerCommand(
+      'format-mizar',
+      formatMizar,
+  );
+  context.subscriptions.push(formatter);
 }
 
 // eslint-disable-next-line require-jsdoc

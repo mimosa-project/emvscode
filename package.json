@@ -69,6 +69,11 @@
                 "category": "Mizar",
                 "command": "stop-command",
                 "title": "Stop Command"
+            },
+            {
+                "category": "Mizar",
+                "command": "format-mizar",
+                "title": "Format Mizar file"
             }
         ],
         "languages": [
@@ -94,6 +99,10 @@
                 {
                     "when": "resourceLangId == Mizar",
                     "command": "stop-command"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "format-mizar"
                 },
                 {
                     "when": "resourceLangId == Mizar",
@@ -175,7 +184,6 @@
         "eslint-plugin-prettier": "^4.0.0",
         "fs": "0.0.1-security",
         "path": "^0.12.7",
-        "prettier": "^2.5.0",
         "readline": "^1.3.0"
     }
 }
