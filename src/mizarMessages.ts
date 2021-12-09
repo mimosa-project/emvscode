@@ -7,7 +7,7 @@ import * as path from 'path';
  * @return {function} エラーメッセージをクエリする関数
  */
 export function makeQueryFunction() {
-  const errNo2Msg:{ [n: number]: string } = {};
+  const errNo2Msg:{ [n:number]:string } = {};
   /**
    * エラーメッセージをクエリする関数
    * @param {number} _errNo エラー番号
