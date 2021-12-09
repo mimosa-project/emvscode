@@ -2,7 +2,7 @@
 * Visual Studio Code Extension for Mizar
 
 ## Note
-* This extension only works on Windows.
+* This extension has been tested on Windows only.
 
 ## Demo
 ### Command execution
