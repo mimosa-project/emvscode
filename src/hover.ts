@@ -77,8 +77,8 @@ function returnMMLHover(
         let [fileName, referenceWord] = hoveredWord.split(':');
         // .absのファイルを参照する
         fileName = path.join(absDir, fileName.toLowerCase() + '.abs');
-        vscode.workspace.openTextDocument(fileName)
-            .then((document) => {
+        vscode.workspace.openTextDocument(fileName).then(
+            (document) => {
               const documentText = document.getText();
               // ホバーによって示されるテキストの開始・終了インデックスを格納する変数
               let startIndex = 0;
@@ -92,8 +92,8 @@ function returnMMLHover(
                     wordIndex,
                 );
                 endIndex = wordIndex +
-                            documentText.slice(wordIndex).search(/end\s*;/) +
-                            'end;'.length;
+                  documentText.slice(wordIndex).search(/end\s*;/) +
+                  'end;'.length;
               }
               // schemeを参照する場合
               else if (/sch\s+\d+/.test(referenceWord)) {
@@ -134,7 +134,7 @@ export class HoverProvider implements vscode.HoverProvider {
     */
   public provideHover(
       document:vscode.TextDocument,
-      position: vscode.Position,
+      position:vscode.Position,
   ):vscode.ProviderResult<vscode.Hover> {
     let wordRange:vscode.Range | undefined;
     // 外部ファイル（MML）の定義、定理、スキームを参照する場合

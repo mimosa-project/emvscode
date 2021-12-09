@@ -67,24 +67,29 @@ function returnABSDefinition(
         // .absのファイルを絶対パスで格納
         fileName = path.join(absDir, fileName.toLowerCase() + '.abs');
         // 定義を参照するドキュメントから，定義箇所を指定して返す
-        vscode.workspace.openTextDocument(fileName).then((document) => {
-          const documentText = document.getText();
-          const index = documentText.indexOf(selectedWord);
-          const startPosition = document.positionAt(index);
-          const endPosition = document.positionAt(index + selectedWord.length);
-          const definitionRange = new vscode.Range(startPosition, endPosition);
-          const definition = new vscode.Location(
-              vscode.Uri.file(fileName),
-              definitionRange,
-          );
-          resolve(definition);
-        },
-        // ドキュメントが開けなかった場合，その旨を表示
-        (e) => {
-          vscode.window.showErrorMessage('Not found ' + fileName);
-          Error('Not found ' + fileName);
-        });
-      });
+        vscode.workspace.openTextDocument(fileName).then(
+            (document) => {
+              const documentText = document.getText();
+              const index = documentText.indexOf(selectedWord);
+              const startPosition = document.positionAt(index);
+              const endPosition =
+                document.positionAt(index + selectedWord.length);
+              const definitionRange =
+                new vscode.Range(startPosition, endPosition);
+              const definition = new vscode.Location(
+                  vscode.Uri.file(fileName),
+                  definitionRange,
+              );
+              resolve(definition);
+            },
+            // ドキュメントが開けなかった場合，その旨を表示
+            (e) => {
+              vscode.window.showErrorMessage('Not found ' + fileName);
+              Error('Not found ' + fileName);
+            },
+        );
+      },
+  );
   return definition;
 }
 
