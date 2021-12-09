@@ -13,7 +13,7 @@ INDENT_SIZE = 2 # 字下げのスペースの個数
 ENV_INDENT_LEVEL = 3    # 環境宣言部分のインデントの段階
 VOCABRARY_DIRECTIVE_ITEM = "vocabularies"
 REQUIREMENT_DIRECTIVE_ITEM = "requirements"
-LIBRARY_DIRECTIVE_ITEMS = ["notations", "constructors", "registrations", 
+LIBRARY_DIRECTIVE_ITEMS = ["notations", "constructors", "registrations",
 "definitions", "expansions", "equalities", "theorems", "schemes"]
 CORRECTNESS_CONDITION_ITEMS = ["correctness", "existence", "uniqueness",
 "coherence", "compatibility", "consistency", "reducibility"]
@@ -583,7 +583,7 @@ def main():
     preprocessed_lines = [] # 入力ファイルに前処理を行った内容
     processed_lines = []    # 前処理後のファイルに処理を行った内容
 
-    with open(file_path, "r") as f1:
+    with open(file_path, "r", encoding='utf-8') as f1:
         input_lines = f1.readlines()
 
     extracted_comment_part_lines, comment_status_list = \
@@ -594,7 +594,7 @@ def main():
         join_comment_part(processed_lines, comment_status_list)
     output_lines = [line+'\n' for line in joined_comment_part_lines]
     
-    with open(file_path, "w") as f2:
+    with open(file_path, "w", encoding='utf-8') as f2:
         for line in output_lines:
             f2.write(line)
 
