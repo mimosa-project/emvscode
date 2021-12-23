@@ -16,7 +16,9 @@ export function formatMizar() {
     command = path.join(
         path.dirname(__dirname), 'mizar-formatter', 'mizarformat.exe');
   } else {
-    command = 'python ' + path.join(
+    // 設定ファイルからPythonのパスを取得，デフォルト値は"python"
+    const pythonPath = vscode.workspace.getConfiguration('Mizar').pythonPath;
+    command = pythonPath + ' ' + path.join(
         path.dirname(__dirname), 'mizar-formatter', 'mizarformat.py');
   }
   try {
@@ -25,6 +27,8 @@ export function formatMizar() {
         'The Mizar file has been formatted.');
   } catch (e) {
     console.log(e);
-    vscode.window.showErrorMessage('Formatting failed.');
+    vscode.window.showErrorMessage(`Formatting failed.
+    Set the Python Path "Mizar.pythonPath"
+    to be used for formatting the Mizar file in settings.json.`);
   }
 }
