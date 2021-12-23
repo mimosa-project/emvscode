@@ -19,6 +19,16 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration":{
+            "title": "Mizar",
+            "properties": {
+                "Mizar.pythonPath": {
+                    "type": "string",
+                    "default": "python",
+                    "description": "Python path to use for Mizar formatting."
+                }
+            }
+        },
         "commands": [
             {
                 "category": "Mizar",
@@ -69,6 +79,11 @@
                 "category": "Mizar",
                 "command": "stop-command",
                 "title": "Stop Command"
+            },
+            {
+                "category": "Mizar",
+                "command": "format-mizar",
+                "title": "Format Mizar file"
             }
         ],
         "languages": [
@@ -94,6 +109,10 @@
                 {
                     "when": "resourceLangId == Mizar",
                     "command": "stop-command"
+                },
+                {
+                    "when": "resourceLangId == Mizar",
+                    "command": "format-mizar"
                 },
                 {
                     "when": "resourceLangId == Mizar",
