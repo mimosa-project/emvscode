@@ -184,7 +184,7 @@
         "eslint-plugin-promise": "^5.1.1",
         "tslint": "^5.12.1",
         "typescript": "^3.9.10",
-        "vscode": "^1.1.36"
+        "vscode": "^1.1.37"
     },
     "icon": "images/mizar.png",
     "dependencies": {
